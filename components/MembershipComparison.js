@@ -9,7 +9,6 @@ import {
   PhoneIcon,
   SparklesIcon,
   HeartIcon,
-  ArrowRightIcon,
 } from '@heroicons/react/24/outline'
 
 const tiers = [
@@ -95,13 +94,17 @@ const tiers = [
 export default function MembershipComparison() {
   const [billingCycle, setBillingCycle] = useState('monthly')
 
+  const handleBillingChange = (cycle) => {
+    if (cycle !== billingCycle) {
+      setBillingCycle(cycle);
+    }
+  };
+
   return (
     <section className="py-24 px-6 relative overflow-hidden" id="membership">
-      {/* 背景 */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#060F1E]/50 via-transparent to-[#060F1E]/50"></div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* 标题 */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-[#C5A572]/10 border border-[#C5A572]/20 rounded-full px-5 py-2 text-sm text-[#C5A572] mb-6">
             <SparklesIcon className="w-5 h-5" />
@@ -115,11 +118,10 @@ export default function MembershipComparison() {
           </p>
         </div>
 
-        {/* 计费周期切换 */}
         <div className="flex justify-center mb-16">
           <div className="bg-[#0A1628] border border-gray-800 rounded-full p-1 inline-flex">
             <button
-              onClick={() => setBillingCycle('monthly')}
+              onClick={() => handleBillingChange('monthly')}
               className={`px-6 py-2 rounded-full text-sm font-medium transition ${
                 billingCycle === 'monthly' ? 'bg-[#C5A572] text-[#0A1628]' : 'text-gray-400 hover:text-white'
               }`}
@@ -127,7 +129,7 @@ export default function MembershipComparison() {
               Monthly
             </button>
             <button
-              onClick={() => setBillingCycle('annual')}
+              onClick={() => handleBillingChange('annual')}
               className={`px-6 py-2 rounded-full text-sm font-medium transition ${
                 billingCycle === 'annual' ? 'bg-[#C5A572] text-[#0A1628]' : 'text-gray-400 hover:text-white'
               }`}
@@ -137,7 +139,6 @@ export default function MembershipComparison() {
           </div>
         </div>
 
-        {/* 三级卡片 */}
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {tiers.map((tier, i) => (
             <div
@@ -148,7 +149,6 @@ export default function MembershipComparison() {
                   : 'border-gray-800 bg-[#0A1628]/50 hover:border-gray-700'
               }`}
             >
-              {/* 徽章 */}
               {tier.badge && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                   <span
@@ -159,7 +159,6 @@ export default function MembershipComparison() {
                 </div>
               )}
 
-              {/* 头部 */}
               <div className="text-center mb-8 pt-2">
                 <h3 className="text-xl font-semibold text-white mb-1">{tier.name}</h3>
                 <p className="text-gray-500 text-sm">{tier.tagline}</p>
@@ -177,7 +176,6 @@ export default function MembershipComparison() {
                 <p className="text-gray-500 text-sm leading-relaxed">{tier.description}</p>
               </div>
 
-              {/* 功能列表 */}
               <div className="space-y-3 mb-8">
                 {tier.features.map((feature, j) => (
                   <div
@@ -201,7 +199,6 @@ export default function MembershipComparison() {
                 ))}
               </div>
 
-              {/* CTA */}
               <Link
                 href={tier.href}
                 className={`block text-center py-3 rounded-full font-semibold transition text-sm ${
@@ -218,7 +215,6 @@ export default function MembershipComparison() {
           ))}
         </div>
 
-        {/* 底部署名 */}
         <div className="text-center mt-12">
           <p className="text-gray-600 text-sm">
             All plans include background-checked, professionally trained caregivers.{' '}
