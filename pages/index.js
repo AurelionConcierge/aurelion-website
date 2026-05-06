@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import SectionHeader from '../components/SectionHeader'
+import AICareAdvisor from '../components/AICareAdvisor'
 import {
   ShieldCheckIcon,
   ClockIcon,
@@ -127,6 +128,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* ========== AI CARE ADVISOR ========== */}
+        <AICareAdvisor />
 
         {/* ========== HOW IT WORKS ========== */}
         <section className="py-24 px-6 bg-[#060F1E]/30">
@@ -261,7 +265,7 @@ export default function Home() {
               Early consultation is recommended. Our premium care arrangements are limited.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <a href="https://wa.me/60185959688" target="_blank" className="btn-gold text-lg px-8 py-4 inline-flex items-center gap-2">
+              <a href="https://wa.me/60185959688" target="_blank" className="btn-gold text-lg px-8 py-4 inline-flex items-center gap-2" rel="noreferrer">
                 <PhoneIcon className="w-5 h-5" />
                 WhatsApp Us
               </a>
