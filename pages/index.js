@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import SectionHeader from '../components/SectionHeader'
 import AICareAdvisor from '../components/AICareAdvisor'
+import MembershipComparison from '../components/MembershipComparison'
 import {
   ShieldCheckIcon,
   ClockIcon,
@@ -11,7 +12,6 @@ import {
   HeartIcon,
   SparklesIcon,
   PhoneIcon,
-  StarIcon,
   ArrowRightIcon,
   CheckBadgeIcon,
 } from '@heroicons/react/24/outline'
@@ -31,13 +31,11 @@ export default function Home() {
       <main className="overflow-hidden">
         {/* ========== HERO SECTION ========== */}
         <section className="relative min-h-screen flex items-center bg-glow pt-20">
-          {/* 背景几何装饰 */}
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-[#C5A572]/5 to-transparent rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-[#C5A572]/3 to-transparent rounded-full blur-3xl"></div>
           
           <div className="max-w-7xl mx-auto px-6 py-20 w-full">
             <div className="grid md:grid-cols-2 gap-12 items-center">
-              {/* 左侧文字 */}
               <div className="animate-fade-in-up">
                 <div className="inline-flex items-center gap-2 bg-[#C5A572]/10 border border-[#C5A572]/20 rounded-full px-4 py-2 text-xs text-[#C5A572] uppercase tracking-wider mb-8">
                   <SparklesIcon className="w-4 h-4" />
@@ -62,7 +60,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* 右侧统计卡片 */}
               <div className="animate-fade-in-up animate-delay-2 grid grid-cols-2 gap-4">
                 {[
                   { icon: ClockIcon, stat: '24-48hrs', label: 'Immediate Deployment' },
@@ -197,43 +194,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ========== VIP PREVIEW ========== */}
-        <section className="py-24 px-6 bg-[#060F1E]/30">
-          <div className="max-w-4xl mx-auto text-center">
-            <SectionHeader
-              subtitle="Premium Experience"
-              title="VIP Concierge Care"
-              description="Unmatched consistency, familiarity, and peace of mind in care."
-            />
-            <div className="glass-card p-10 md:p-16">
-              <div className="grid md:grid-cols-2 gap-8 text-left">
-                <div className="space-y-4">
-                  {['Fixed Caregiver Priority', 'Dedicated Care Manager', 'Priority Scheduling'].map((f, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <StarIcon className="w-5 h-5 text-[#C5A572] flex-shrink-0" />
-                      <span className="text-gray-300">{f}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="space-y-4">
-                  {['Backup Replacement System', 'Personalized Care Plan', 'Hospital Coordination Priority'].map((f, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <StarIcon className="w-5 h-5 text-[#C5A572] flex-shrink-0" />
-                      <span className="text-gray-300">{f}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="mt-10 pt-8 border-t border-[#C5A572]/10">
-                <p className="text-gray-400 mb-2">Monthly VIP Upgrade Fee</p>
-                <p className="text-4xl font-display font-bold text-[#C5A572]">RM800 – 1,500</p>
-                <Link href="/vip" className="btn-gold inline-block mt-6">
-                  Learn More About VIP
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* ========== MEMBERSHIP COMPARISON ========== */}
+        <MembershipComparison />
 
         {/* ========== LOCATIONS ========== */}
         <section className="py-24 px-6">
