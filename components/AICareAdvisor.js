@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { SparklesIcon, ArrowRightIcon, UserIcon, BeakerIcon, QuestionMarkCircleIcon, PhoneIcon, HeartIcon } from '@heroicons/react/24/outline'
-import { generateWhatsAppMessage } from '../lib/aiAdvisor'
+import { analyzeCareNeeds, generateWhatsAppMessage } from '../lib/aiAdvisor'
 
 export default function AICareAdvisor() {
   const [step, setStep] = useState(1)
@@ -10,21 +10,24 @@ export default function AICareAdvisor() {
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState(null)
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     setLoading(true)
-    try {
-      const res = await fetch('/api/ai-advisor', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ age, condition, bedridden }),
-      })
-      const data = await res.json()
-      setResults(data)
-      setStep(3)
-    } catch (err) {
-      console.error(err)
-    }
-    setLoading(false)
+    
+    // 纯前端计算，不需要后端 API
+    setTimeout(() => {
+      try {
+        const data = analyzeCareNeeds({
+          age: parseInt(age),
+          condition,
+          bedridden: bedridden || 'no',
+        })
+        setResults(data)
+        setStep(3)
+      } catch (err) {
+        console.error('AI Advisor error:', err)
+      }
+      setLoading(false)
+    }, 800) // 模拟分析延迟，让用户感觉AI在思考
   }
 
   const whatsappLink = results
@@ -41,11 +44,9 @@ export default function AICareAdvisor() {
 
   return (
     <section className="py-24 px-6 relative overflow-hidden" id="ai-advisor">
-      {/* 背景光晕 */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#C5A572]/5 via-transparent to-transparent"></div>
 
       <div className="max-w-3xl mx-auto relative z-10">
-        {/* 标题 */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-[#C5A572]/10 border border-[#C5A572]/20 rounded-full px-5 py-2 text-sm text-[#C5A572] mb-6">
             <SparklesIcon className="w-5 h-5" />
@@ -59,7 +60,6 @@ export default function AICareAdvisor() {
           </p>
         </div>
 
-        {/* 步骤指示器 */}
         <div className="flex justify-center gap-2 mb-12">
           {[1, 2, 3].map((s) => (
             <div
@@ -71,9 +71,8 @@ export default function AICareAdvisor() {
           ))}
         </div>
 
-        {/* 表单卡片 */}
         <div className="glass-card p-8 md:p-12 border-[#C5A572]/20">
-          {/* ===== STEP 1: Age ===== */}
+          {/* STEP 1 */}
           {step === 1 && (
             <div className="space-y-8 animate-fade-in-up">
               <div className="flex items-center gap-4 mb-6">
@@ -104,10 +103,9 @@ export default function AICareAdvisor() {
             </div>
           )}
 
-          {/* ===== STEP 2: Condition + Bedridden ===== */}
+          {/* STEP 2 */}
           {step === 2 && (
             <div className="space-y-8 animate-fade-in-up">
-              {/* 病情 */}
               <div>
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-12 h-12 bg-[#C5A572]/10 rounded-full flex items-center justify-center">
@@ -127,7 +125,6 @@ export default function AICareAdvisor() {
                 />
               </div>
 
-              {/* 卧床 */}
               <div>
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-12 h-12 bg-[#C5A572]/10 rounded-full flex items-center justify-center">
@@ -162,7 +159,6 @@ export default function AICareAdvisor() {
                 </div>
               </div>
 
-              {/* 按钮组 */}
               <div className="flex gap-4">
                 <button onClick={() => setStep(1)} className="btn-outline-gold flex-1 py-4">
                   Back
@@ -190,10 +186,9 @@ export default function AICareAdvisor() {
             </div>
           )}
 
-          {/* ===== STEP 3: Results ===== */}
+          {/* STEP 3: Results */}
           {step === 3 && results && (
             <div className="space-y-8 animate-fade-in-up">
-              {/* 成功标题 */}
               <div className="text-center">
                 <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <HeartIcon className="w-8 h-8 text-green-400" />
@@ -202,7 +197,6 @@ export default function AICareAdvisor() {
                 <p className="text-gray-400">Based on our analysis, here's the optimal plan.</p>
               </div>
 
-              {/* 严重程度徽章 */}
               <div className="text-center">
                 <span className={`inline-block px-4 py-1.5 rounded-full text-sm font-semibold uppercase tracking-wider ${
                   results.severity === 'high' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
@@ -213,7 +207,6 @@ export default function AICareAdvisor() {
                 </span>
               </div>
 
-              {/* 推荐服务 */}
               <div className="space-y-3">
                 <h4 className="text-sm uppercase tracking-wider text-gray-500 font-medium">Top Recommendations</h4>
                 {results.recommendedServices.map((service, i) => (
@@ -227,13 +220,11 @@ export default function AICareAdvisor() {
                 ))}
               </div>
 
-              {/* 预估价格 */}
               <div className="bg-[#C5A572]/5 border border-[#C5A572]/20 rounded-xl p-6 text-center">
                 <p className="text-gray-400 text-sm mb-1">Estimated Monthly Investment</p>
                 <p className="text-2xl font-display font-bold text-[#C5A572]">{results.estimatedPrice}</p>
               </div>
 
-              {/* AI 摘要 */}
               <div className="bg-[#0A1628]/80 rounded-xl p-6 border border-gray-800">
                 <div className="flex items-center gap-2 mb-3">
                   <SparklesIcon className="w-5 h-5 text-[#C5A572]" />
@@ -242,12 +233,12 @@ export default function AICareAdvisor() {
                 <p className="text-gray-300 text-sm leading-relaxed">{results.summary}</p>
               </div>
 
-              {/* CTA 按钮 */}
               <div className="space-y-3">
                 <a
                   href={whatsappLink}
                   target="_blank"
                   className="btn-gold w-full py-4 text-lg flex items-center justify-center gap-2"
+                  rel="noreferrer"
                 >
                   <PhoneIcon className="w-5 h-5" />
                   Send to WhatsApp & Get Consultation
@@ -260,7 +251,6 @@ export default function AICareAdvisor() {
           )}
         </div>
 
-        {/* 信任注脚 */}
         <p className="text-center text-gray-600 text-xs mt-6">
           Powered by Aurelion AI. This is a recommendation tool, not medical advice. Always consult a healthcare professional.
         </p>
