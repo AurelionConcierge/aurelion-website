@@ -10,7 +10,6 @@ export default function SignUp() {
   const [refCode, setRefCode] = useState('')
 
   useEffect(() => {
-    // 从 URL 读取推荐码
     if (router.query.ref) {
       setRefCode(router.query.ref)
     }
@@ -19,7 +18,6 @@ export default function SignUp() {
   const handleSignUp = async (e) => {
     e.preventDefault()
     
-    // 注册用户
     const { data, error } = await supabase.auth.signUp({ email, password })
     
     if (error) {
@@ -27,10 +25,8 @@ export default function SignUp() {
       return
     }
 
-    // 如果有推荐码，记录推荐关系
     if (refCode && data.user) {
       try {
-        // 查找推荐人
         const { data: referrer } = await supabase
           .from('profiles')
           .select('id')
@@ -38,7 +34,6 @@ export default function SignUp() {
           .single()
 
         if (referrer) {
-          // 创建推荐记录
           await supabase.from('referrals').insert({
             referrer_id: referrer.id,
             referred_user_id: data.user.id,
@@ -51,7 +46,10 @@ export default function SignUp() {
       }
     }
 
-    setMessage('Account created! Check your email to confirm, then log in.')
+    setMessage('Account created! Redirecting...')
+    setTimeout(() => {
+      router.push('/dashboard')
+    }, 1500)
   }
 
   return (
