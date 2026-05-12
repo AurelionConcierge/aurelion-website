@@ -11,6 +11,8 @@ import {
   ClipboardDocumentListIcon,
 } from '@heroicons/react/24/outline'
 
+const adminEmails = ['eztradetoday@gmail.com', 'care@aurelionconcierge.com']
+
 export default function Admin() {
   const router = useRouter()
   const [user, setUser] = useState(null)
@@ -20,9 +22,6 @@ export default function Admin() {
   const [profiles, setProfiles] = useState([])
   const [referrals, setReferrals] = useState([])
   const [stats, setStats] = useState({ totalBookings: 0, totalUsers: 0, totalReferrals: 0 })
-
-  // 管理员邮箱列表
-  const adminEmails = ['eztradetoday@gmail.com', 'care@aurelionconcierge.com']
 
   useEffect(() => {
     checkAuth()
@@ -46,18 +45,22 @@ export default function Admin() {
   async function fetchAllData() {
     try {
       const [bookingsRes, profilesRes, referralsRes] = await Promise.all([
-        supabase.from('bookings').select('*').order('created_at', { ascending: false }),
-        supabase.from('profiles').select('*'),
-        supabase.from('referrals').select('*').order('created_at', { ascending: false }),
+        supabase.from('bookings').select('*', { count: 'exact' }).order('created_at', { ascending: false }).limit(100),
+        supabase.from('profiles').select('*', { count: 'exact' }).limit(100),
+        supabase.from('referrals').select('*', { count: 'exact' }).order('created_at', { ascending: false }).limit(100),
       ])
 
-      setBookings(bookingsRes.data || [])
-      setProfiles(profilesRes.data || [])
-      setReferrals(referralsRes.data || [])
+      const bookingsData = bookingsRes.data || []
+      const profilesData = profilesRes.data || []
+      const referralsData = referralsRes.data || []
+
+      setBookings(bookingsData)
+      setProfiles(profilesData)
+      setReferrals(referralsData)
       setStats({
-        totalBookings: bookingsRes.data?.length || 0,
-        totalUsers: profilesRes.data?.length || 0,
-        totalReferrals: referralsRes.data?.length || 0,
+        totalBookings: bookingsData.length,
+        totalUsers: profilesData.length,
+        totalReferrals: referralsData.length,
       })
     } catch (err) {
       console.error('Admin fetch error:', err)
@@ -83,7 +86,6 @@ export default function Admin() {
       <Navbar />
       <main className="pt-24 pb-24 px-6 bg-glow min-h-screen">
         <div className="max-w-7xl mx-auto">
-          {/* 头部 */}
           <div className="flex items-center justify-between mb-10">
             <div>
               <h1 className="text-3xl font-display font-semibold text-white">Admin Dashboard</h1>
@@ -95,7 +97,6 @@ export default function Admin() {
             </button>
           </div>
 
-          {/* 统计卡片 */}
           <div className="grid md:grid-cols-3 gap-6 mb-10">
             {tabs.map((tab) => (
               <button
@@ -166,7 +167,7 @@ export default function Admin() {
             <div className="glass-card p-6 md:p-8">
               <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
                 <UserGroupIcon className="w-6 h-6 text-[#C5A572]" />
-                Registered Users
+                Registered Users ({profiles.length})
               </h3>
               {profiles.length === 0 ? (
                 <div className="text-center py-12">
@@ -200,7 +201,7 @@ export default function Admin() {
                           </td>
                           <td className="py-3 pr-4 text-white">{p.full_name || '—'}</td>
                           <td className="py-3 pr-4">{p.phone || '—'}</td>
-                          <td className="py-3 text-gray-500">{new Date(p.created_at).toLocaleDateString()}</td>
+                          <td className="py-3 text-gray-500">{p.created_at ? new Date(p.created_at).toLocaleDateString() : '—'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -215,7 +216,7 @@ export default function Admin() {
             <div className="glass-card p-6 md:p-8">
               <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
                 <CurrencyDollarIcon className="w-6 h-6 text-[#C5A572]" />
-                Referral History
+                Referral History ({referrals.length})
               </h3>
               {referrals.length === 0 ? (
                 <div className="text-center py-12">
@@ -243,7 +244,7 @@ export default function Admin() {
                               {r.status}
                             </span>
                           </td>
-                          <td className="py-3 text-gray-500">{new Date(r.created_at).toLocaleDateString()}</td>
+                          <td className="py-3 text-gray-500">{r.created_at ? new Date(r.created_at).toLocaleDateString() : '—'}</td>
                         </tr>
                       ))}
                     </tbody>
