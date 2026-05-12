@@ -34,19 +34,73 @@ export default function Dashboard() {
       return
     }
     setUser(session.user)
-    fetchReferralData(session.access_token)
+    await fetchReferralData(session.user)
     setLoading(false)
   }
 
-  async function fetchReferralData(token) {
+  function generateReferralCode() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    let code = 'AUR'
+    for (let i = 0; i < 8; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length))
+    }
+    return code
+  }
+
+  async function fetchReferralData(currentUser) {
     try {
-      const res = await fetch('/api/referral', {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
-      if (!data.error) {
-        setReferralData(data)
+      // 获取或创建 profile
+      let { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', currentUser.id)
+        .single()
+
+      if (!profile) {
+        const code = generateReferralCode()
+        const { data: newProfile } = await supabase
+          .from('profiles')
+          .insert({
+            id: currentUser.id,
+            referral_code: code,
+            membership_level: 'basic',
+          })
+          .select()
+          .single()
+        profile = newProfile
       }
+
+      if (!profile.referral_code) {
+        const code = generateReferralCode()
+        await supabase
+          .from('profiles')
+          .update({ referral_code: code })
+          .eq('id', currentUser.id)
+        profile.referral_code = code
+      }
+
+      // 获取推荐记录
+      const { data: referrals } = await supabase
+        .from('referrals')
+        .select('*')
+        .eq('referrer_id', currentUser.id)
+        .order('created_at', { ascending: false })
+
+      const totalEarned = referrals
+        ?.filter(r => r.status === 'paid')
+        ?.reduce((sum, r) => sum + (r.reward_amount || 0), 0) || 0
+
+      const pendingAmount = referrals
+        ?.filter(r => r.status === 'pending')
+        ?.reduce((sum, r) => sum + (r.reward_amount || 0), 0) || 0
+
+      setReferralData({
+        profile,
+        referrals: referrals || [],
+        totalEarned,
+        pendingAmount,
+        referralLink: `https://aurelionconcierge.com/signup?ref=${profile.referral_code}`,
+      })
     } catch (err) {
       console.error('Failed to fetch referral data:', err)
     }
@@ -82,7 +136,6 @@ export default function Dashboard() {
       <Navbar />
       <main className="pt-24 pb-24 px-6 bg-glow min-h-screen">
         <div className="max-w-5xl mx-auto">
-          {/* 标题 */}
           <div className="mb-12">
             <h1 className="text-3xl font-display font-semibold text-white mb-2">
               Welcome, {user?.email?.split('@')[0] || 'Member'}
@@ -90,7 +143,6 @@ export default function Dashboard() {
             <p className="text-gray-400">Your care concierge dashboard</p>
           </div>
 
-          {/* 标签切换 */}
           <div className="flex gap-2 mb-10 border-b border-gray-800 pb-4">
             {[
               { id: 'overview', label: 'Overview', icon: UserIcon },
@@ -111,10 +163,8 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {/* ===== OVERVIEW TAB ===== */}
           {activeTab === 'overview' && (
             <div className="space-y-8">
-              {/* 会员状态卡片 */}
               <div className="glass-card p-8">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-14 h-14 bg-[#C5A572]/10 rounded-2xl flex items-center justify-center">
@@ -147,7 +197,6 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* 快速操作 */}
               <div className="glass-card p-8">
                 <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
                   <SparklesIcon className="w-5 h-5 text-[#C5A572]" />
@@ -182,10 +231,8 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* ===== REFERRALS TAB ===== */}
           {activeTab === 'referrals' && (
             <div className="space-y-8">
-              {/* 推荐统计 */}
               <div className="glass-card p-8">
                 <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
                   <CurrencyDollarIcon className="w-6 h-6 text-[#C5A572]" />
@@ -206,7 +253,6 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* 分享区域 */}
                 <div className="bg-[#0A1628]/80 rounded-xl p-6 border border-gray-800">
                   <p className="text-white font-medium mb-3">Your Referral Link</p>
                   <div className="flex gap-3">
@@ -218,7 +264,7 @@ export default function Dashboard() {
                     />
                     <button
                       onClick={copyReferralLink}
-                      className="bg-[#C5A572]/10 border border-[#C5A572]/30 rounded-xl px-4 py-3 text-[#C5A572] hover:bg-[#C5A572]/20 transition flex items-center gap-2"
+                      className="bg-[#C5A572]/10 border border-[#C5A572]/30 rounded-xl px-4 py-3 text-[#C5A572] hover:bg-[#C5A572]/20 transition flex items-center gap-2 whitespace-nowrap"
                     >
                       <ClipboardDocumentIcon className="w-5 h-5" />
                       {copied ? 'Copied!' : 'Copy'}
@@ -234,7 +280,6 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* 推荐记录 */}
               <div className="glass-card p-8">
                 <h3 className="text-xl font-semibold text-white mb-6">Referral History</h3>
                 {referralData?.referrals?.length > 0 ? (
