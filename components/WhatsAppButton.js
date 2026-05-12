@@ -33,7 +33,7 @@ export default function WhatsAppButton() {
       {/* 主按钮 */}
       <button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-6 right-6 bg-green-500 text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center text-2xl z-40 hover:scale-110 transition-transform hover:bg-green-400"
+        className="fixed bottom-24 right-6 bg-green-500 text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center text-2xl z-40 hover:scale-110 transition-transform hover:bg-green-400"
         style={{ boxShadow: '0 4px 20px rgba(34, 197, 94, 0.4)' }}
       >
         <PhoneIcon className="w-6 h-6" />
@@ -41,7 +41,7 @@ export default function WhatsAppButton() {
 
       {/* 弹出窗口 */}
       {open && (
-        <div className="fixed bottom-24 right-6 w-80 bg-[#0F1D32] border border-green-500/20 rounded-2xl shadow-2xl z-40 overflow-hidden">
+        <div className="fixed bottom-36 right-6 w-80 bg-[#0F1D32] border border-green-500/20 rounded-2xl shadow-2xl z-40 overflow-hidden">
           {/* 头部 */}
           <div className="bg-green-500 p-4 flex justify-between items-center">
             <div className="flex items-center gap-2">
