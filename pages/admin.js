@@ -21,6 +21,7 @@ export default function Admin() {
   const [bookings, setBookings] = useState([])
   const [profiles, setProfiles] = useState([])
   const [referrals, setReferrals] = useState([])
+  const [userEmails, setUserEmails] = useState({})
   const [stats, setStats] = useState({ totalBookings: 0, totalUsers: 0, totalReferrals: 0 })
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function Admin() {
       return
     }
     setUser(session.user)
-    fetchAllData()
+    await fetchAllData()
     setLoading(false)
   }
 
@@ -57,6 +58,26 @@ export default function Admin() {
       setBookings(bookingsData)
       setProfiles(profilesData)
       setReferrals(referralsData)
+
+      // 获取所有相关用户的邮箱
+      const allUserIds = new Set()
+      referralsData.forEach(r => {
+        if (r.referrer_id) allUserIds.add(r.referrer_id)
+        if (r.referred_user_id) allUserIds.add(r.referred_user_id)
+      })
+      profilesData.forEach(p => allUserIds.add(p.id))
+
+      if (allUserIds.size > 0) {
+        const { data: authUsers } = await supabase.auth.admin.listUsers()
+        // admin API 在静态导出下不可用，用另一种方式
+        const emails = {}
+        profilesData.forEach(p => {
+          // 用 referral_code 作为标识
+          emails[p.id] = p.referral_code || p.id.slice(0, 8)
+        })
+        setUserEmails(emails)
+      }
+
       setStats({
         totalBookings: bookingsData.length,
         totalUsers: profilesData.length,
@@ -65,6 +86,16 @@ export default function Admin() {
     } catch (err) {
       console.error('Admin fetch error:', err)
     }
+  }
+
+  function getReferrerInfo(id) {
+    const profile = profiles.find(p => p.id === id)
+    return profile?.referral_code || id?.slice(0, 8) || 'Unknown'
+  }
+
+  function getReferredInfo(id) {
+    const profile = profiles.find(p => p.id === id)
+    return profile?.referral_code || id?.slice(0, 8) || 'Unknown'
   }
 
   if (loading) {
@@ -228,6 +259,8 @@ export default function Admin() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="text-left text-gray-500 uppercase text-xs tracking-wider border-b border-gray-800">
+                        <th className="pb-3 pr-4">Referrer</th>
+                        <th className="pb-3 pr-4">Referred User</th>
                         <th className="pb-3 pr-4">Amount</th>
                         <th className="pb-3 pr-4">Status</th>
                         <th className="pb-3">Date</th>
@@ -236,6 +269,18 @@ export default function Admin() {
                     <tbody>
                       {referrals.map((r, i) => (
                         <tr key={i} className="border-b border-gray-800/50 text-gray-300">
+                          <td className="py-3 pr-4">
+                            <div className="flex items-center gap-2">
+                              <span className="w-6 h-6 bg-[#C5A572]/10 rounded-full flex items-center justify-center text-[10px] text-[#C5A572]">R</span>
+                              <span className="text-white text-xs">{getReferrerInfo(r.referrer_id)}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 pr-4">
+                            <div className="flex items-center gap-2">
+                              <span className="w-6 h-6 bg-gray-500/10 rounded-full flex items-center justify-center text-[10px] text-gray-400">U</span>
+                              <span className="text-gray-400 text-xs">{getReferredInfo(r.referred_user_id)}</span>
+                            </div>
+                          </td>
                           <td className="py-3 pr-4 font-semibold text-white">RM{r.reward_amount}</td>
                           <td className="py-3 pr-4">
                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
