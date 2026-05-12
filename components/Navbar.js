@@ -4,6 +4,8 @@ import { useRouter } from 'next/router'
 import { Bars3Icon, XMarkIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { supabase } from '../lib/supabase'
 
+const adminEmails = ['eztradetoday@gmail.com', 'care@aurelionconcierge.com']
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [user, setUser] = useState(null)
@@ -28,6 +30,8 @@ export default function Navbar() {
     router.push('/')
   }
 
+  const isAdmin = user && adminEmails.includes(user.email)
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0A1628]/90 backdrop-blur-xl border-b border-[#C5A572]/10">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -48,6 +52,11 @@ export default function Navbar() {
           
           {user ? (
             <div className="flex items-center gap-4">
+              {isAdmin && (
+                <Link href="/admin" className="text-gray-500 hover:text-[#C5A572] transition text-xs">
+                  Admin
+                </Link>
+              )}
               <Link href="/dashboard" className="flex items-center gap-2 text-[#C5A572] hover:text-white transition">
                 <UserCircleIcon className="w-5 h-5" />
                 Dashboard
@@ -76,6 +85,9 @@ export default function Navbar() {
           <Link href="/contact" className="block text-gray-400 hover:text-[#C5A572] transition" onClick={() => setMobileOpen(false)}>Contact</Link>
           {user ? (
             <>
+              {isAdmin && (
+                <Link href="/admin" className="block text-gray-500 hover:text-[#C5A572] transition" onClick={() => setMobileOpen(false)}>Admin</Link>
+              )}
               <Link href="/dashboard" className="block text-[#C5A572] hover:text-white transition" onClick={() => setMobileOpen(false)}>Dashboard</Link>
               <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="block text-gray-500 hover:text-red-400 transition">Logout</button>
             </>
