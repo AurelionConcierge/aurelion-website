@@ -25,25 +25,43 @@ export default function SignUp() {
       return
     }
 
+    // 推荐码处理 - 注册成功后延迟执行，确保 profiles 表已创建
     if (refCode && data.user) {
-      try {
-        const { data: referrer } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('referral_code', refCode)
-          .single()
+      // 延迟 2 秒，等 Supabase 触发器创建 profiles 记录
+      setTimeout(async () => {
+        try {
+          // 查找推荐人
+          const { data: referrer, error: referrerError } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('referral_code', refCode)
+            .single()
 
-        if (referrer) {
-          await supabase.from('referrals').insert({
-            referrer_id: referrer.id,
-            referred_user_id: data.user.id,
-            reward_amount: 200,
-            status: 'pending',
-          })
+          if (referrerError) {
+            console.error('Referrer lookup error:', referrerError)
+            return
+          }
+
+          if (referrer) {
+            const { error: insertError } = await supabase
+              .from('referrals')
+              .insert({
+                referrer_id: referrer.id,
+                referred_user_id: data.user.id,
+                reward_amount: 200,
+                status: 'pending',
+              })
+
+            if (insertError) {
+              console.error('Referral insert error:', insertError)
+            } else {
+              console.log('Referral record created successfully!')
+            }
+          }
+        } catch (err) {
+          console.error('Referral tracking error:', err)
         }
-      } catch (err) {
-        console.error('Referral tracking error:', err)
-      }
+      }, 2000)
     }
 
     setMessage('Account created! Redirecting...')
