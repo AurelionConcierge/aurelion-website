@@ -5,6 +5,7 @@ import Footer from '../components/Footer'
 import SectionHeader from '../components/SectionHeader'
 import AICareAdvisor from '../components/AICareAdvisor'
 import MembershipComparison from '../components/MembershipComparison'
+import BookingForm from '../components/BookingForm'
 import {
   ShieldCheckIcon,
   ClockIcon,
@@ -128,6 +129,9 @@ export default function Home() {
 
         {/* ========== AI CARE ADVISOR ========== */}
         <AICareAdvisor />
+
+        {/* ========== BOOKING FORM ========== */}
+        <BookingForm />
 
         {/* ========== HOW IT WORKS ========== */}
         <section className="py-24 px-6 bg-[#060F1E]/30">
