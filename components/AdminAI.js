@@ -1,24 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
 import {
   SparklesIcon,
   UserGroupIcon,
   ExclamationTriangleIcon,
   CalendarDaysIcon,
-  MagnifyingGlassIcon,
   HeartIcon,
 } from '@heroicons/react/24/outline'
 
-// 模拟护理员数据库（实际应该从 Supabase 读取）
-const caregivers = [
-  { id: 1, name: 'Siti Nurhaliza', languages: ['Malay', 'English'], specialties: ['elderly', 'dementia', 'bedridden'], experience: 8, rating: 4.9, available: true, location: 'Penang' },
-  { id: 2, name: 'Tan Mei Ling', languages: ['Mandarin', 'Cantonese', 'English'], specialties: ['stroke', 'post-hospital', 'physiotherapy'], experience: 12, rating: 4.8, available: true, location: 'KL' },
-  { id: 3, name: 'Rajesh Kumar', languages: ['Tamil', 'Malay', 'English'], specialties: ['bedridden', 'nursing', 'medication'], experience: 6, rating: 4.7, available: true, location: 'JB' },
-  { id: 4, name: 'Aishah binti Rahman', languages: ['Malay', 'Arabic'], specialties: ['elderly', 'companionship', 'night-care'], experience: 5, rating: 4.9, available: false, location: 'Melaka' },
-  { id: 5, name: 'Wong Chee Keong', languages: ['Mandarin', 'Hokkien', 'Malay'], specialties: ['stroke', 'dementia', 'mobility'], experience: 15, rating: 4.6, available: true, location: 'Penang' },
-  { id: 6, name: 'Nurul Izzah', languages: ['Malay', 'English'], specialties: ['post-hospital', 'elderly', 'companionship'], experience: 3, rating: 4.8, available: true, location: 'KL' },
-]
-
-// 模拟客户列表（从 bookings 表获取）
+// 模拟客户列表（实际应从 bookings 表读取，这里保留示例）
 const patients = [
   { id: 1, name: 'Mr. Lim', age: 78, condition: 'stroke', bedridden: 'no', location: 'Penang', language: 'Hokkien', risk: 'medium', bookedDate: '2026-05-15' },
   { id: 2, name: 'Puan Aminah', age: 85, condition: 'dementia', bedridden: 'yes', location: 'KL', language: 'Malay', risk: 'high', bookedDate: '2026-05-10' },
@@ -29,20 +19,43 @@ export default function AdminAI() {
   const [aiTab, setAiTab] = useState('matching')
   const [selectedPatient, setSelectedPatient] = useState(null)
   const [matchResult, setMatchResult] = useState(null)
+  
+  // 从 Supabase 读取护理员数据
+  const [caregivers, setCaregivers] = useState([])
+  const [loadingCaregivers, setLoadingCaregivers] = useState(true)
+
+  useEffect(() => {
+    async function fetchCaregivers() {
+      const { data, error } = await supabase
+        .from('caregivers')
+        .select('*')
+      if (data) {
+        setCaregivers(data)
+      } else if (error) {
+        console.error('Error fetching caregivers:', error)
+      }
+      setLoadingCaregivers(false)
+    }
+    fetchCaregivers()
+  }, [])
 
   // 护理员匹配引擎
   const runMatching = (patient) => {
-    // 根据病情匹配专长
+    if (!caregivers.length) return []
+    
     let scored = caregivers.map(cg => {
       let score = 0
       
       // 专长匹配 (+3 per match)
-      cg.specialties.forEach(s => {
+      (cg.specialties || []).forEach(s => {
         if (patient.condition.includes(s) || s.includes(patient.condition)) score += 3
       })
       
       // 语言匹配 (+2 per match)
-      if (cg.languages.some(l => patient.language.toLowerCase().includes(l.toLowerCase()) || l.toLowerCase().includes(patient.language.toLowerCase()))) {
+      if ((cg.languages || []).some(l => 
+        patient.language.toLowerCase().includes(l.toLowerCase()) || 
+        l.toLowerCase().includes(patient.language.toLowerCase())
+      )) {
         score += 2
       }
       
@@ -50,10 +63,10 @@ export default function AdminAI() {
       if (cg.location === patient.location) score += 2
       
       // 经验加分 (+1 per 3 years, max 5)
-      score += Math.min(Math.floor(cg.experience / 3), 5)
+      score += Math.min(Math.floor((cg.experience || 0) / 3), 5)
       
       // 评分加分 (+rating)
-      score += cg.rating
+      score += (cg.rating || 0)
       
       // 可用性 (+5 if available, -10 if not)
       if (cg.available) score += 5
@@ -165,7 +178,7 @@ export default function AdminAI() {
                       <span className="text-[#C5A572] font-bold text-lg">{cg.score}</span>
                     </div>
                     <div className="flex flex-wrap gap-2 text-xs">
-                      {cg.specialties.map((s, j) => (
+                      {(cg.specialties || []).map((s, j) => (
                         <span key={j} className="px-2 py-1 bg-[#C5A572]/10 text-[#C5A572] rounded-full">{s}</span>
                       ))}
                       <span className="px-2 py-1 bg-gray-700 text-gray-300 rounded-full">📍 {cg.location}</span>
@@ -190,54 +203,64 @@ export default function AdminAI() {
           </h3>
           <p className="text-gray-400 text-sm">Visual overview of caregiver workload and availability. Avoid over-booking.</p>
           
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-gray-500 uppercase text-xs tracking-wider border-b border-gray-800">
-                  <th className="pb-3 pr-4">Caregiver</th>
-                  <th className="pb-3 pr-4">Location</th>
-                  <th className="pb-3 pr-4">Status</th>
-                  <th className="pb-3 pr-4">Workload</th>
-                  <th className="pb-3">Recommendation</th>
-                </tr>
-              </thead>
-              <tbody>
-                {caregivers.map(cg => {
-                  const workload = cg.experience > 10 ? 85 : cg.experience > 5 ? 50 : 30
-                  const isOverworked = workload > 80
-                  return (
-                    <tr key={cg.id} className="border-b border-gray-800/50 text-gray-300">
-                      <td className="py-3 pr-4">
-                        <p className="text-white font-medium">{cg.name}</p>
-                        <p className="text-gray-500 text-xs">{cg.languages.join(', ')}</p>
-                      </td>
-                      <td className="py-3 pr-4">{cg.location}</td>
-                      <td className="py-3 pr-4">
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${cg.available ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
-                          {cg.available ? 'Available' : 'Assigned'}
-                        </span>
-                      </td>
-                      <td className="py-3 pr-4">
-                        <div className="w-24 bg-gray-800 rounded-full h-2">
-                          <div className={`h-2 rounded-full ${isOverworked ? 'bg-red-500' : workload > 50 ? 'bg-yellow-500' : 'bg-green-500'}`} style={{ width: `${workload}%` }}></div>
-                        </div>
-                        <span className="text-xs text-gray-500">{workload}%</span>
-                      </td>
-                      <td className="py-3">
-                        {isOverworked ? (
-                          <span className="text-red-400 text-xs">⚠ Reduce load</span>
-                        ) : cg.available ? (
-                          <span className="text-green-400 text-xs">✅ Can assign</span>
-                        ) : (
-                          <span className="text-yellow-400 text-xs">🔄 Near capacity</span>
-                        )}
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
+          {loadingCaregivers ? (
+            <div className="text-center py-8">
+              <div className="animate-spin w-8 h-8 border-2 border-[#C5A572] border-t-transparent rounded-full mx-auto"></div>
+            </div>
+          ) : caregivers.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500">No caregivers found. Add them in Supabase Table Editor.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-gray-500 uppercase text-xs tracking-wider border-b border-gray-800">
+                    <th className="pb-3 pr-4">Caregiver</th>
+                    <th className="pb-3 pr-4">Location</th>
+                    <th className="pb-3 pr-4">Status</th>
+                    <th className="pb-3 pr-4">Workload</th>
+                    <th className="pb-3">Recommendation</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {caregivers.map(cg => {
+                    const workload = cg.experience > 10 ? 85 : cg.experience > 5 ? 50 : 30
+                    const isOverworked = workload > 80
+                    return (
+                      <tr key={cg.id} className="border-b border-gray-800/50 text-gray-300">
+                        <td className="py-3 pr-4">
+                          <p className="text-white font-medium">{cg.name}</p>
+                          <p className="text-gray-500 text-xs">{(cg.languages || []).join(', ')}</p>
+                        </td>
+                        <td className="py-3 pr-4">{cg.location}</td>
+                        <td className="py-3 pr-4">
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${cg.available ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
+                            {cg.available ? 'Available' : 'Assigned'}
+                          </span>
+                        </td>
+                        <td className="py-3 pr-4">
+                          <div className="w-24 bg-gray-800 rounded-full h-2">
+                            <div className={`h-2 rounded-full ${isOverworked ? 'bg-red-500' : workload > 50 ? 'bg-yellow-500' : 'bg-green-500'}`} style={{ width: `${workload}%` }}></div>
+                          </div>
+                          <span className="text-xs text-gray-500">{workload}%</span>
+                        </td>
+                        <td className="py-3">
+                          {isOverworked ? (
+                            <span className="text-red-400 text-xs">⚠ Reduce load</span>
+                          ) : cg.available ? (
+                            <span className="text-green-400 text-xs">✅ Can assign</span>
+                          ) : (
+                            <span className="text-yellow-400 text-xs">🔄 Near capacity</span>
+                          )}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
 
