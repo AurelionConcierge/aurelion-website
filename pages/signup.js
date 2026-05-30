@@ -25,26 +25,21 @@ export default function SignUp() {
       return
     }
 
-    // 如果有推荐码，建立推荐关系并创建初始 referral 记录
+    // 如果有推荐码，创建推荐关系记录
     if (refCode && data.user) {
-      setTimeout(async () => {
-        try {
-          // 查找推荐人
-          const { data: referrer } = await supabase
-            .from('profiles')
-            .select('id')
-            .eq('referral_code', refCode)
-            .single()
+      try {
+        // 查找推荐人
+        const { data: referrer } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('referral_code', refCode)
+          .single()
 
-          if (referrer) {
-            // 1. 更新被推荐人的 referred_by 字段
-            await supabase
-              .from('profiles')
-              .update({ referred_by: referrer.id })
-              .eq('id', data.user.id)
-
-            // 2. 在 referrals 表创建初始记录（金额为空，等待管理员发放）
-            await supabase.from('referrals').insert({
+        if (referrer) {
+          // 插入 referrals 初始记录
+          const { error: insertError } = await supabase
+            .from('referrals')
+            .insert({
               referrer_id: referrer.id,
               referred_user_id: data.user.id,
               reward_amount: null,
@@ -52,11 +47,20 @@ export default function SignUp() {
               service_type: null,
               status: 'pending',
             })
+
+          if (insertError) {
+            console.error('Referral insert error:', insertError)
           }
-        } catch (err) {
-          console.error('Referral relationship error:', err)
+
+          // 同时更新 profiles 的 referred_by
+          await supabase
+            .from('profiles')
+            .update({ referred_by: referrer.id })
+            .eq('id', data.user.id)
         }
-      }, 2000)
+      } catch (err) {
+        console.error('Referral error:', err)
+      }
     }
 
     setMessage('Account created! Redirecting...')
