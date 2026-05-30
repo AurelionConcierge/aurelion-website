@@ -25,26 +25,29 @@ export default function SignUp() {
       return
     }
 
-    // 如果有推荐码，只记录推荐关系（不发放奖励）
+    // 注册成功后，只记录推荐关系，不发放奖励
+    // 奖励在下级购买服务后由管理员在后台手动触发
     if (refCode && data.user) {
-      try {
-        // 查找推荐人
-        const { data: referrer } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('referral_code', refCode)
-          .single()
-
-        if (referrer) {
-          // 更新当前用户的 referred_by 字段
-          await supabase
+      setTimeout(async () => {
+        try {
+          // 查找推荐人
+          const { data: referrer } = await supabase
             .from('profiles')
-            .update({ referred_by: referrer.id })
-            .eq('id', data.user.id)
+            .select('id')
+            .eq('referral_code', refCode)
+            .single()
+
+          if (referrer) {
+            // 更新被推荐人的 referred_by 字段，建立推荐关系
+            await supabase
+              .from('profiles')
+              .update({ referred_by: referrer.id })
+              .eq('id', data.user.id)
+          }
+        } catch (err) {
+          console.error('Referral relationship error:', err)
         }
-      } catch (err) {
-        console.error('Referral tracking error:', err)
-      }
+      }, 2000)
     }
 
     setMessage('Account created! Redirecting...')
@@ -68,22 +71,53 @@ export default function SignUp() {
         <form onSubmit={handleSignUp} className="space-y-4">
           <div>
             <label className="text-gray-400 text-sm mb-1 block">Email</label>
-            <input type="email" placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-[#0A1628] border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-[#C5A572] transition" required />
+            <input
+              type="email"
+              placeholder="you@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-[#0A1628] border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-[#C5A572] transition"
+              required
+            />
           </div>
           <div>
             <label className="text-gray-400 text-sm mb-1 block">Password</label>
-            <input type="password" placeholder="Min 6 characters" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-[#0A1628] border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-[#C5A572] transition" required minLength={6} />
+            <input
+              type="password"
+              placeholder="Min 6 characters"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-[#0A1628] border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-[#C5A572] transition"
+              required
+              minLength={6}
+            />
           </div>
           {refCode && (
             <div>
               <label className="text-gray-400 text-sm mb-1 block">Referral Code</label>
-              <input type="text" value={refCode} readOnly className="w-full bg-[#0A1628]/50 border border-[#C5A572]/30 rounded-xl p-3 text-[#C5A572] outline-none" />
+              <input
+                type="text"
+                value={refCode}
+                readOnly
+                className="w-full bg-[#0A1628]/50 border border-[#C5A572]/30 rounded-xl p-3 text-[#C5A572] outline-none"
+              />
             </div>
           )}
-          <button type="submit" className="btn-gold w-full py-3 text-base">Create Account</button>
+          <button type="submit" className="btn-gold w-full py-3 text-base">
+            Create Account
+          </button>
         </form>
-        {message && <p className={`mt-4 text-sm ${message.includes('error') || message.includes('wrong') ? 'text-red-400' : 'text-green-400'}`}>{message}</p>}
-        <p className="mt-6 text-gray-600 text-sm text-center">Already have an account? <a href="/login" className="text-[#C5A572] hover:underline">Sign in</a></p>
+
+        {message && (
+          <p className={`mt-4 text-sm ${message.includes('error') || message.includes('wrong') ? 'text-red-400' : 'text-green-400'}`}>
+            {message}
+          </p>
+        )}
+
+        <p className="mt-6 text-gray-600 text-sm text-center">
+          Already have an account?{' '}
+          <a href="/login" className="text-[#C5A572] hover:underline">Sign in</a>
+        </p>
       </div>
     </div>
   )
