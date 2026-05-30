@@ -109,7 +109,7 @@ export default function Home() {
               {[
                 { name: '24-Hour Stay-In Care', desc: 'Round-the-clock professional care and companionship for complete peace of mind.' },
                 { name: 'Post-Hospital Recovery', desc: 'Smooth transition from hospital to home with skilled nursing support.' },
-                { name: 'Dementia Care', desc: 'Specialized, compassionate care for Alzheimer's and dementia patients.' },
+                { name: 'Dementia Care', desc: `Specialized, compassionate care for Alzheimer's and dementia patients.` },
                 { name: 'Stroke Rehabilitation', desc: 'Dedicated post-stroke recovery focusing on mobility and daily living.' },
                 { name: 'Bedridden Patient Care', desc: 'Full assistance including feeding, hygiene, and pressure sore prevention.' },
                 { name: 'Elderly Companion Care', desc: 'Social engagement, medication reminders, and daily activity support.' },
@@ -151,8 +151,8 @@ export default function Home() {
             />
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { step: '01', title: 'Free Consultation', desc: 'Tell us your needs via WhatsApp, phone, or our online form. We listen and advise — no obligation.' },
-                { step: '02', title: 'Personalized Care Plan', desc: 'Our care manager designs a tailored plan matching your loved one's medical needs, language, and personality.' },
+                { step: '01', title: 'Free Consultation', desc: `Tell us your needs via WhatsApp, phone, or our online form. We listen and advise — no obligation.` },
+                { step: '02', title: 'Personalized Care Plan', desc: `Our care manager designs a tailored plan matching your loved one's medical needs, language, and personality.` },
                 { step: '03', title: 'Care Begins in 24-48 Hours', desc: 'A fully vetted, experienced caregiver arrives at your doorstep, supported by our 24/7 management team.' },
               ].map((item, i) => (
                 <div key={i} className="text-center">
