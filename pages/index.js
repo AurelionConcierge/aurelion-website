@@ -45,7 +45,7 @@ export default function Home() {
               <div className="animate-fade-in-up">
                 <div className="inline-flex items-center gap-2 bg-[#C5A572]/10 border border-[#C5A572]/20 rounded-full px-4 py-2 text-xs text-[#C5A572] uppercase tracking-wider mb-8">
                   <SparklesIcon className="w-4 h-4" />
-                  {`Malaysia's Premium Home Healthcare`}
+                  Malaysia&apos;s Premium Home Healthcare
                 </div>
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-semibold leading-tight mb-8">
                   Your Loved Ones<br/>
@@ -109,7 +109,8 @@ export default function Home() {
               {[
                 { name: '24-Hour Stay-In Care', desc: 'Round-the-clock professional care and companionship for complete peace of mind.' },
                 { name: 'Post-Hospital Recovery', desc: 'Smooth transition from hospital to home with skilled nursing support.' },
-{ name: 'Dementia Care', desc: 'Specialized, compassionate care for dementia patients and their families.' },                { name: 'Stroke Rehabilitation', desc: 'Dedicated post-stroke recovery focusing on mobility and daily living.' },
+                { name: 'Dementia Care', desc: 'Specialized, compassionate care for dementia patients and their families.' },
+                { name: 'Stroke Rehabilitation', desc: 'Dedicated post-stroke recovery focusing on mobility and daily living.' },
                 { name: 'Bedridden Patient Care', desc: 'Full assistance including feeding, hygiene, and pressure sore prevention.' },
                 { name: 'Elderly Companion Care', desc: 'Social engagement, medication reminders, and daily activity support.' },
                 { name: '12-Hour Day/Night Care', desc: 'Focused care during daytime or overnight for safety.' },
@@ -150,8 +151,8 @@ export default function Home() {
             />
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { step: '01', title: 'Free Consultation', desc: `Tell us your needs via WhatsApp, phone, or our online form. We listen and advise — no obligation.` },
-                { step: '02', title: 'Personalized Care Plan', desc: `Our care manager designs a tailored plan matching your loved one's medical needs, language, and personality.` },
+                { step: '01', title: 'Free Consultation', desc: 'Tell us your needs via WhatsApp, phone, or our online form. We listen and advise, with no obligation.' },
+                { step: '02', title: 'Personalized Care Plan', desc: 'Our care manager designs a tailored plan matching your loved ones medical needs, language, and personality.' },
                 { step: '03', title: 'Care Begins in 24-48 Hours', desc: 'A fully vetted, experienced caregiver arrives at your doorstep, supported by our 24/7 management team.' },
               ].map((item, i) => (
                 <div key={i} className="text-center">
