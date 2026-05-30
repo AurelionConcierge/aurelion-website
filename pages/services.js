@@ -8,10 +8,10 @@ import Head from 'next/head'
 const services = [
   { name: '24-Hour Stay-In Care', desc: 'Continuous professional care and companionship around the clock. Perfect for elderly parents, bedridden patients, or anyone needing full-time supervision. Our caregivers live in and become part of the family routine.' },
   { name: 'Post-Hospital Recovery Care', desc: 'Smooth, safe transition from hospital to home. Our nurses manage wound care, medication schedules, mobility exercises, and monitor for complications — reducing readmission risk.' },
-  { name: 'Dementia & Alzheimer's Care', desc: 'Specialized, compassionate care for loved ones with memory loss. Caregivers trained in dementia communication techniques, safety protocols, and creating calming daily routines.' },
+  { name: `Dementia & Alzheimer's Care`, desc: `Specialized, compassionate care for loved ones with memory loss. Caregivers trained in dementia communication techniques, safety protocols, and creating calming daily routines.` },
   { name: 'Stroke Rehabilitation', desc: 'Post-stroke recovery program focusing on regaining mobility, speech, and independence. Includes prescribed exercises, medication management, and emotional support.' },
   { name: 'Bedridden Patient Care', desc: 'Complete assistance for immobile patients. Includes feeding, bathing, diaper changing, pressure sore prevention, and passive range-of-motion exercises to maintain circulation.' },
-  { name: 'Elderly Companion Care', desc: 'Social engagement and daily living assistance for seniors who don't need medical care but benefit from company, meal preparation, light housekeeping, and medication reminders.' },
+  { name: 'Elderly Companion Care', desc: `Social engagement and daily living assistance for seniors who don't need medical care but benefit from company, meal preparation, light housekeeping, and medication reminders.` },
   { name: '12-Hour Day/Night Care', desc: 'Dedicated care during waking hours or overnight supervision. Ideal for families who can manage part of the day but need professional help during specific periods.' },
   { name: 'Hourly Flexible Care', desc: 'As-needed assistance — from a few hours of respite care to accompanying your loved one to medical appointments. No minimum commitment.' },
   { name: 'Medication Management', desc: 'Professional oversight of complex medication schedules. We ensure the right medicine at the right time, track side effects, and coordinate with your doctor.' },
