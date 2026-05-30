@@ -25,8 +25,7 @@ export default function SignUp() {
       return
     }
 
-    // 注册成功后，只记录推荐关系，不发放奖励
-    // 奖励在下级购买服务后由管理员在后台手动触发
+    // 如果有推荐码，建立推荐关系并创建初始 referral 记录
     if (refCode && data.user) {
       setTimeout(async () => {
         try {
@@ -38,11 +37,21 @@ export default function SignUp() {
             .single()
 
           if (referrer) {
-            // 更新被推荐人的 referred_by 字段，建立推荐关系
+            // 1. 更新被推荐人的 referred_by 字段
             await supabase
               .from('profiles')
               .update({ referred_by: referrer.id })
               .eq('id', data.user.id)
+
+            // 2. 在 referrals 表创建初始记录（金额为空，等待管理员发放）
+            await supabase.from('referrals').insert({
+              referrer_id: referrer.id,
+              referred_user_id: data.user.id,
+              reward_amount: null,
+              reward_type: null,
+              service_type: null,
+              status: 'pending',
+            })
           }
         } catch (err) {
           console.error('Referral relationship error:', err)
