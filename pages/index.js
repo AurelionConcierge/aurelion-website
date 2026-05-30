@@ -45,7 +45,7 @@ export default function Home() {
               <div className="animate-fade-in-up">
                 <div className="inline-flex items-center gap-2 bg-[#C5A572]/10 border border-[#C5A572]/20 rounded-full px-4 py-2 text-xs text-[#C5A572] uppercase tracking-wider mb-8">
                   <SparklesIcon className="w-4 h-4" />
-                  Malaysia's Premium Home Healthcare
+                  {`Malaysia's Premium Home Healthcare`}
                 </div>
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-semibold leading-tight mb-8">
                   Your Loved Ones<br/>
