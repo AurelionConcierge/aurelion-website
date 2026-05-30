@@ -3,12 +3,14 @@ import { useRouter } from 'next/router'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { supabase } from '../lib/supabase'
+import AdminAI from '../components/AdminAI'
 import {
   CalendarDaysIcon,
   UserGroupIcon,
   CurrencyDollarIcon,
   ArrowLeftIcon,
   ClipboardDocumentListIcon,
+  SparklesIcon,
 } from '@heroicons/react/24/outline'
 
 const adminEmails = ['eztradetoday@gmail.com', 'care@aurelionconcierge.com']
@@ -59,7 +61,6 @@ export default function Admin() {
       setProfiles(profilesData)
       setReferrals(referralsData)
 
-      // 获取所有相关用户的邮箱
       const allUserIds = new Set()
       referralsData.forEach(r => {
         if (r.referrer_id) allUserIds.add(r.referrer_id)
@@ -68,11 +69,8 @@ export default function Admin() {
       profilesData.forEach(p => allUserIds.add(p.id))
 
       if (allUserIds.size > 0) {
-        const { data: authUsers } = await supabase.auth.admin.listUsers()
-        // admin API 在静态导出下不可用，用另一种方式
         const emails = {}
         profilesData.forEach(p => {
-          // 用 referral_code 作为标识
           emails[p.id] = p.referral_code || p.id.slice(0, 8)
         })
         setUserEmails(emails)
@@ -110,6 +108,7 @@ export default function Admin() {
     { id: 'bookings', label: 'Bookings', icon: CalendarDaysIcon, count: stats.totalBookings },
     { id: 'users', label: 'Users', icon: UserGroupIcon, count: stats.totalUsers },
     { id: 'referrals', label: 'Referrals', icon: CurrencyDollarIcon, count: stats.totalReferrals },
+    { id: 'ai', label: 'AI Tools', icon: SparklesIcon, count: null },
   ]
 
   return (
@@ -128,7 +127,7 @@ export default function Admin() {
             </button>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-10">
+          <div className="grid md:grid-cols-4 gap-6 mb-10">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -141,7 +140,12 @@ export default function Admin() {
                   <div className="w-12 h-12 bg-[#C5A572]/10 rounded-xl flex items-center justify-center">
                     <tab.icon className="w-6 h-6 text-[#C5A572]" />
                   </div>
-                  <span className="text-3xl font-display font-bold text-[#C5A572]">{tab.count}</span>
+                  {tab.count !== null && (
+                    <span className="text-3xl font-display font-bold text-[#C5A572]">{tab.count}</span>
+                  )}
+                  {tab.count === null && (
+                    <SparklesIcon className="w-6 h-6 text-[#C5A572]" />
+                  )}
                 </div>
                 <p className="text-gray-400 text-sm mt-3">{tab.label}</p>
               </button>
@@ -298,6 +302,9 @@ export default function Admin() {
               )}
             </div>
           )}
+
+          {/* AI TOOLS */}
+          {activeTab === 'ai' && <AdminAI />}
         </div>
       </main>
       <Footer />
