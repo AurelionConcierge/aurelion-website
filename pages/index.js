@@ -109,8 +109,7 @@ export default function Home() {
               {[
                 { name: '24-Hour Stay-In Care', desc: 'Round-the-clock professional care and companionship for complete peace of mind.' },
                 { name: 'Post-Hospital Recovery', desc: 'Smooth transition from hospital to home with skilled nursing support.' },
-                { name: 'Dementia Care', desc: `Specialized, compassionate care for Alzheimer's and dementia patients.` },
-                { name: 'Stroke Rehabilitation', desc: 'Dedicated post-stroke recovery focusing on mobility and daily living.' },
+{ name: 'Dementia Care', desc: 'Specialized, compassionate care for dementia patients and their families.' },                { name: 'Stroke Rehabilitation', desc: 'Dedicated post-stroke recovery focusing on mobility and daily living.' },
                 { name: 'Bedridden Patient Care', desc: 'Full assistance including feeding, hygiene, and pressure sore prevention.' },
                 { name: 'Elderly Companion Care', desc: 'Social engagement, medication reminders, and daily activity support.' },
                 { name: '12-Hour Day/Night Care', desc: 'Focused care during daytime or overnight for safety.' },
