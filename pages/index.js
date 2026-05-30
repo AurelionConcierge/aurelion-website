@@ -21,10 +21,15 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Aurelion Concierge Care | Premium Private Home Healthcare in Malaysia</title>
-        <meta name="description" content="Luxury private home healthcare with VIP concierge service. 24-hour managed care, immediate deployment within 24-48 hours across Penang, KL, Melaka, JB." />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>Private Home Healthcare Malaysia | Aurelion Concierge Care</title>
+        <meta name="description" content="Premium private home healthcare services in Penang, KL, Melaka & JB. 24-hour care, dementia & stroke recovery, post-hospital care. VIP concierge-level nursing at home. Free consultation." />
+        <meta name="keywords" content="home healthcare Malaysia, private nurse Malaysia, dementia care Penang, stroke recovery KL, elderly care JB, home nursing Melaka, 24 hour caregiver, post hospital care Malaysia" />
+        <meta property="og:title" content="Private Home Healthcare Malaysia | Aurelion Concierge Care" />
+        <meta property="og:description" content="Premium private home healthcare with VIP concierge service. 24-hour managed care across Penang, KL, Melaka & JB." />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://aurelionconcierge.com" />
       </Head>
 
       <Navbar />
@@ -40,33 +45,36 @@ export default function Home() {
               <div className="animate-fade-in-up">
                 <div className="inline-flex items-center gap-2 bg-[#C5A572]/10 border border-[#C5A572]/20 rounded-full px-4 py-2 text-xs text-[#C5A572] uppercase tracking-wider mb-8">
                   <SparklesIcon className="w-4 h-4" />
-                  Premium Concierge Healthcare
+                  Malaysia's Premium Home Healthcare
                 </div>
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-semibold leading-tight mb-8">
-                  Because Your<br/>
-                  Loved Ones Deserve{' '}
-                  <span className="text-gradient">Exceptional<br/>Care</span>
+                  Your Loved Ones<br/>
+                  Deserve <span className="text-gradient">World-Class<br/>Care at Home</span>
                 </h1>
                 <p className="text-gray-400 text-lg md:text-xl mb-10 max-w-lg leading-relaxed">
-                  Private Care. Elevated to a Concierge Experience.
+                  Private nursing, elderly care, and post-hospital recovery — delivered with 5-star concierge service across Penang, KL, Melaka, and Johor Bahru.
                 </p>
                 <div className="flex flex-wrap gap-4">
-                  <Link href="/contact" className="btn-gold text-lg px-8 py-4 inline-flex items-center gap-2">
-                    Book Consultation
+                  <Link href="#booking" className="btn-gold text-lg px-8 py-4 inline-flex items-center gap-2">
+                    Book Free Consultation
                     <ArrowRightIcon className="w-5 h-5" />
                   </Link>
                   <Link href="/services" className="btn-outline-gold text-lg px-8 py-4">
-                    Explore Services
+                    View All Services
                   </Link>
+                </div>
+                <div className="flex items-center gap-6 mt-8 text-gray-500 text-sm">
+                  <span className="flex items-center gap-1"><CheckBadgeIcon className="w-4 h-4 text-green-400" /> Licensed Nurses</span>
+                  <span className="flex items-center gap-1"><CheckBadgeIcon className="w-4 h-4 text-green-400" /> 24-48hr Deployment</span>
                 </div>
               </div>
 
               <div className="animate-fade-in-up animate-delay-2 grid grid-cols-2 gap-4">
                 {[
-                  { icon: ClockIcon, stat: '24-48hrs', label: 'Immediate Deployment' },
-                  { icon: UserGroupIcon, stat: '100+', label: 'Certified Caregivers' },
-                  { icon: ShieldCheckIcon, stat: '24/7', label: 'Managed Care System' },
-                  { icon: HeartIcon, stat: '500+', label: 'Families Served' },
+                  { icon: ClockIcon, stat: '24-48hrs', label: 'Fast Deployment' },
+                  { icon: UserGroupIcon, stat: '200+', label: 'Certified Caregivers' },
+                  { icon: ShieldCheckIcon, stat: '24/7', label: 'Managed Care' },
+                  { icon: HeartIcon, stat: '1,000+', label: 'Families Served' },
                 ].map((item, i) => (
                   <div key={i} className="glass-card p-6 text-center">
                     <item.icon className="w-8 h-8 text-[#C5A572] mx-auto mb-3" />
@@ -85,7 +93,7 @@ export default function Home() {
             <span className="flex items-center gap-2"><CheckBadgeIcon className="w-5 h-5 text-[#C5A572]" /> Licensed & Insured</span>
             <span className="flex items-center gap-2"><CheckBadgeIcon className="w-5 h-5 text-[#C5A572]" /> Background Checked</span>
             <span className="flex items-center gap-2"><CheckBadgeIcon className="w-5 h-5 text-[#C5A572]" /> Medical Professionals</span>
-            <span className="flex items-center gap-2"><CheckBadgeIcon className="w-5 h-5 text-[#C5A572]" /> Confidential Care</span>
+            <span className="flex items-center gap-2"><CheckBadgeIcon className="w-5 h-5 text-[#C5A572]" /> 100% Confidential</span>
           </div>
         </section>
 
@@ -94,20 +102,20 @@ export default function Home() {
           <div className="max-w-6xl mx-auto">
             <SectionHeader
               subtitle="What We Offer"
-              title="Comprehensive Care Solutions"
-              description="From hourly assistance to 24-hour managed care, every service is delivered with concierge-level attention to detail."
+              title="Comprehensive Home Care Services"
+              description="From hourly companionship to 24-hour specialized nursing, every service is delivered with concierge-level professionalism and compassion."
             />
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { name: '24-Hour Stay-In Care', desc: 'Continuous support and companionship around the clock.' },
-                { name: '12-Hour Care', desc: 'Focused assistance during specific periods.' },
-                { name: 'Hourly Care', desc: 'Flexible support as needed.' },
-                { name: 'Stroke Care', desc: 'Specialized post-stroke recovery and adaptation.' },
-                { name: 'Dementia Care', desc: 'Compassionate support for individuals with dementia.' },
-                { name: 'Bedridden Care', desc: 'Comprehensive care for limited mobility.' },
-                { name: 'Post-Hospital Recovery', desc: 'Smooth recovery at home after discharge.' },
-                { name: 'Night Care', desc: 'Overnight support for safety and peace of mind.' },
-                { name: 'Medication Assistance', desc: 'Reminders and help with prescribed medications.' },
+                { name: '24-Hour Stay-In Care', desc: 'Round-the-clock professional care and companionship for complete peace of mind.' },
+                { name: 'Post-Hospital Recovery', desc: 'Smooth transition from hospital to home with skilled nursing support.' },
+                { name: 'Dementia Care', desc: 'Specialized, compassionate care for Alzheimer's and dementia patients.' },
+                { name: 'Stroke Rehabilitation', desc: 'Dedicated post-stroke recovery focusing on mobility and daily living.' },
+                { name: 'Bedridden Patient Care', desc: 'Full assistance including feeding, hygiene, and pressure sore prevention.' },
+                { name: 'Elderly Companion Care', desc: 'Social engagement, medication reminders, and daily activity support.' },
+                { name: '12-Hour Day/Night Care', desc: 'Focused care during daytime or overnight for safety.' },
+                { name: 'Hourly Flexible Care', desc: 'As-needed assistance — perfect for occasional support.' },
+                { name: 'Medication Management', desc: 'Timely reminders and professional administration of prescribed medications.' },
               ].map((service, i) => (
                 <div key={i} className="glass-card p-8 group cursor-pointer">
                   <div className="w-12 h-12 bg-[#C5A572]/10 rounded-xl flex items-center justify-center mb-5 group-hover:bg-[#C5A572]/20 transition">
@@ -120,7 +128,7 @@ export default function Home() {
             </div>
             <div className="text-center mt-12">
               <Link href="/services" className="btn-outline-gold inline-flex items-center gap-2">
-                View All Services
+                View All 10 Services
                 <ArrowRightIcon className="w-4 h-4" />
               </Link>
             </div>
@@ -137,15 +145,15 @@ export default function Home() {
         <section className="py-24 px-6 bg-[#060F1E]/30">
           <div className="max-w-6xl mx-auto">
             <SectionHeader
-              subtitle="Our Process"
-              title="How It Works"
-              description="An efficient and clear process from start to finish."
+              subtitle="Simple Process"
+              title="How to Get Started"
+              description="Three easy steps to bring professional care to your loved one's home."
             />
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { step: '01', title: 'Free Consultation', desc: 'Share your needs via phone, WhatsApp, or our online form. We listen carefully.' },
-                { step: '02', title: 'Personalized Care Plan', desc: 'Our team creates a tailored care plan matching your specific requirements.' },
-                { step: '03', title: 'Care Begins Within 48 Hours', desc: 'A vetted, professional caregiver is deployed to your home swiftly.' },
+                { step: '01', title: 'Free Consultation', desc: 'Tell us your needs via WhatsApp, phone, or our online form. We listen and advise — no obligation.' },
+                { step: '02', title: 'Personalized Care Plan', desc: 'Our care manager designs a tailored plan matching your loved one's medical needs, language, and personality.' },
+                { step: '03', title: 'Care Begins in 24-48 Hours', desc: 'A fully vetted, experienced caregiver arrives at your doorstep, supported by our 24/7 management team.' },
               ].map((item, i) => (
                 <div key={i} className="text-center">
                   <div className="w-20 h-20 bg-gradient-to-br from-[#C5A572] to-[#E2C99D] rounded-full flex items-center justify-center mx-auto mb-6 text-[#0A1628] text-2xl font-display font-bold">
@@ -164,19 +172,19 @@ export default function Home() {
           <div className="max-w-5xl mx-auto">
             <SectionHeader
               subtitle="Transparent Pricing"
-              title="Flexible Care Packages"
-              description="Designed to meet your specific needs with no hidden costs."
+              title="Care Packages for Every Need"
+              description="No hidden fees. Every sen goes to quality care for your loved one."
             />
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { name: '24-Hour Stay-In', price: 'RM250-400', unit: '/day', popular: false, features: ['Continuous care', 'Best for long-term', 'Managed system'] },
-                { name: 'Monthly Package', price: 'RM6,500-9,000', unit: '/month', popular: true, features: ['Most popular', 'Cost effective', 'Priority deployment'] },
-                { name: 'Hourly Care', price: 'RM35-50', unit: '/hour', popular: false, features: ['As needed', 'Flexible schedule', 'No commitment'] },
+                { name: '24-Hour Stay-In', price: 'RM250-400', unit: '/day', popular: false, features: ['Continuous professional care', 'Ideal for long-term needs', '24/7 management support'] },
+                { name: 'Monthly Care Package', price: 'RM6,500-9,000', unit: '/month', popular: true, features: ['Best value for ongoing care', 'Priority caregiver matching', 'Dedicated care manager'] },
+                { name: 'Hourly Flexible Care', price: 'RM35-50', unit: '/hour', popular: false, features: ['Pay only for hours needed', 'No long-term commitment', 'Same caregiver where possible'] },
               ].map((pkg, i) => (
                 <div key={i} className={`glass-card p-8 text-center relative ${pkg.popular ? 'border-[#C5A572]/40' : ''}`}>
                   {pkg.popular && (
                     <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#C5A572] to-[#D4B896] text-[#0A1628] px-5 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                      Popular
+                      Most Popular
                     </span>
                   )}
                   <h3 className="text-xl font-semibold mb-2 text-white">{pkg.name}</h3>
@@ -191,7 +199,7 @@ export default function Home() {
                       </li>
                     ))}
                   </ul>
-                  <Link href="/contact" className="btn-gold w-full block text-center">Enquire Now</Link>
+                  <Link href="/contact" className="btn-gold w-full block text-center">Get Started</Link>
                 </div>
               ))}
             </div>
@@ -205,13 +213,20 @@ export default function Home() {
         <section className="py-24 px-6">
           <div className="max-w-4xl mx-auto text-center">
             <SectionHeader
-              subtitle="Service Areas"
+              subtitle="Where We Serve"
               title="Available Across Malaysia"
+              description="Our caregivers are ready to deploy across these major cities and surrounding areas."
             />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {['Penang', 'Kuala Lumpur', 'Melaka', 'Johor Bahru'].map((city, i) => (
+              {[
+                { city: 'Penang', area: 'Island & Mainland' },
+                { city: 'Kuala Lumpur', area: 'KL & Selangor' },
+                { city: 'Melaka', area: 'City & Suburbs' },
+                { city: 'Johor Bahru', area: 'JB & Iskandar' },
+              ].map((loc, i) => (
                 <div key={i} className="glass-card p-6 text-center">
-                  <p className="text-lg font-semibold text-white">{city}</p>
+                  <p className="text-lg font-semibold text-white">{loc.city}</p>
+                  <p className="text-gray-500 text-xs mt-1">{loc.area}</p>
                 </div>
               ))}
             </div>
@@ -222,21 +237,21 @@ export default function Home() {
         <section className="py-24 px-6 bg-[#060F1E]/50">
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-[#C5A572]/10 border border-[#C5A572]/20 rounded-full px-4 py-2 text-xs text-[#C5A572] uppercase tracking-wider mb-6">
-              Limited Availability
+              Limited Caregiver Availability
             </div>
             <h2 className="text-3xl md:text-4xl font-display font-semibold mb-6">
-              Ready to Experience <span className="text-gradient">Exceptional Care</span>?
+              Your Family Deserves the <span className="text-gradient">Very Best Care</span>
             </h2>
             <p className="text-gray-400 text-lg mb-10">
-              Early consultation is recommended. Our premium care arrangements are limited.
+              Join 1,000+ Malaysian families who trust Aurelion for their loved ones. Free consultation — no obligation.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <a href="https://wa.me/60185959688" target="_blank" className="btn-gold text-lg px-8 py-4 inline-flex items-center gap-2" rel="noreferrer">
                 <PhoneIcon className="w-5 h-5" />
-                WhatsApp Us
+                WhatsApp Us Now
               </a>
               <Link href="/contact" className="btn-outline-gold text-lg px-8 py-4">
-                Contact Page
+                Other Ways to Reach Us
               </Link>
             </div>
           </div>
