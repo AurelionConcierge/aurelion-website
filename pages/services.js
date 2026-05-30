@@ -7,25 +7,25 @@ import Head from 'next/head'
 
 const services = [
   { name: '24-Hour Stay-In Care', desc: 'Continuous professional care and companionship around the clock. Perfect for elderly parents, bedridden patients, or anyone needing full-time supervision. Our caregivers live in and become part of the family routine.' },
-  { name: 'Post-Hospital Recovery Care', desc: 'Smooth, safe transition from hospital to home. Our nurses manage wound care, medication schedules, mobility exercises, and monitor for complications — reducing readmission risk.' },
-  { name: `Dementia & Alzheimer's Care`, desc: `Specialized, compassionate care for loved ones with memory loss. Caregivers trained in dementia communication techniques, safety protocols, and creating calming daily routines.` },
+  { name: 'Post-Hospital Recovery Care', desc: 'Smooth, safe transition from hospital to home. Our nurses manage wound care, medication schedules, mobility exercises, and monitor for complications.' },
+  { name: 'Dementia and Alzheimer Care', desc: 'Specialized, compassionate care for loved ones with memory loss. Caregivers trained in dementia communication techniques, safety protocols, and creating calming daily routines.' },
   { name: 'Stroke Rehabilitation', desc: 'Post-stroke recovery program focusing on regaining mobility, speech, and independence. Includes prescribed exercises, medication management, and emotional support.' },
-  { name: 'Bedridden Patient Care', desc: 'Complete assistance for immobile patients. Includes feeding, bathing, diaper changing, pressure sore prevention, and passive range-of-motion exercises to maintain circulation.' },
-  { name: 'Elderly Companion Care', desc: `Social engagement and daily living assistance for seniors who don't need medical care but benefit from company, meal preparation, light housekeeping, and medication reminders.` },
+  { name: 'Bedridden Patient Care', desc: 'Complete assistance for immobile patients. Includes feeding, bathing, diaper changing, pressure sore prevention, and passive range-of-motion exercises.' },
+  { name: 'Elderly Companion Care', desc: 'Social engagement and daily living assistance for seniors who prefer not to manage medical care alone. Company, meal preparation, light housekeeping, and medication reminders included.' },
   { name: '12-Hour Day/Night Care', desc: 'Dedicated care during waking hours or overnight supervision. Ideal for families who can manage part of the day but need professional help during specific periods.' },
-  { name: 'Hourly Flexible Care', desc: 'As-needed assistance — from a few hours of respite care to accompanying your loved one to medical appointments. No minimum commitment.' },
+  { name: 'Hourly Flexible Care', desc: 'As-needed assistance. From a few hours of respite care to accompanying your loved one to medical appointments. No minimum commitment.' },
   { name: 'Medication Management', desc: 'Professional oversight of complex medication schedules. We ensure the right medicine at the right time, track side effects, and coordinate with your doctor.' },
   { name: 'Physiotherapy at Home', desc: 'Certified physiotherapists provide rehabilitation sessions in the comfort of your home. Available as an add-on to any care package.' },
   { name: 'Medical Escort Service', desc: 'We accompany your loved one to hospital appointments, dialysis sessions, or check-ups. Transportation can be arranged.' },
-  { name: 'Hospital Admission Coordination', desc: 'Full management of hospital admissions and discharges on behalf of the family — paperwork, doctor communication, and bedside support.' },
+  { name: 'Hospital Admission Coordination', desc: 'Full management of hospital admissions and discharges on behalf of the family. Paperwork, doctor communication, and bedside support.' },
 ]
 
 export default function Services() {
   return (
     <>
       <Head>
-        <title>Home Care Services Malaysia | 24-Hour Nursing, Dementia & Stroke Care</title>
-        <meta name="description" content="Professional home healthcare services across Malaysia. 24-hour nursing, dementia care, stroke recovery, bedridden patient care, elderly companion — all with concierge-level service. Serving Penang, KL, Melaka, JB." />
+        <title>Home Care Services Malaysia | 24-Hour Nursing, Dementia and Stroke Care</title>
+        <meta name="description" content="Professional home healthcare services across Malaysia. 24-hour nursing, dementia care, stroke recovery, bedridden patient care, elderly companion. All with concierge-level service. Serving Penang, KL, Melaka, JB." />
         <link rel="canonical" href="https://aurelionconcierge.com/services" />
       </Head>
 
@@ -35,7 +35,7 @@ export default function Services() {
           <SectionHeader
             subtitle="Our Expertise"
             title="Complete Home Healthcare Services"
-            description="Every service is delivered by trained, background-checked professionals who treat your loved one like family. Available across Penang, KL, Melaka & JB."
+            description="Every service is delivered by trained, background-checked professionals who treat your loved one like family. Available across Penang, KL, Melaka and JB."
           />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((s, i) => (
