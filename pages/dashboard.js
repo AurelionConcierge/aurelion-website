@@ -45,35 +45,15 @@ export default function Dashboard() {
 
   async function loadDashboardData(currentUser) {
     try {
-      // 获取或创建 profile
-      let { data: profileData } = await supabase
+      // 由数据库函数确保 profile、推荐码和推荐关系都已建立
+      const { error: initError } = await supabase.rpc('init_my_profile')
+      if (initError) console.error('Init profile error:', initError)
+
+      const { data: profileData } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', currentUser.id)
         .single()
-
-      if (!profileData) {
-        const code = generateReferralCode()
-        const { data: newProfile } = await supabase
-          .from('profiles')
-          .insert({
-            id: currentUser.id,
-            referral_code: code,
-            membership_level: 'basic',
-          })
-          .select()
-          .single()
-        profileData = newProfile
-      }
-
-      if (!profileData.referral_code) {
-        const code = generateReferralCode()
-        await supabase
-          .from('profiles')
-          .update({ referral_code: code })
-          .eq('id', currentUser.id)
-        profileData.referral_code = code
-      }
 
       setProfile(profileData)
 
@@ -92,7 +72,7 @@ export default function Dashboard() {
       let voucher = 0
       refs.forEach(r => {
         // 只计算已发放或可提现的
-        if (r.status === 'paid' || r.status === 'eligible') {
+        if (r.status === 'eligible') {
           if (r.reward_type === 'cash') {
             cash += r.reward_amount || 0
           } else {
@@ -106,15 +86,6 @@ export default function Dashboard() {
     } catch (err) {
       console.error('Dashboard load error:', err)
     }
-  }
-
-  function generateReferralCode() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-    let code = 'AUR'
-    for (let i = 0; i < 8; i++) {
-      code += chars.charAt(Math.floor(Math.random() * chars.length))
-    }
-    return code
   }
 
   const referralLink = profile?.referral_code
