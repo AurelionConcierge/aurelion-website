@@ -15,57 +15,35 @@ export default function SignUp() {
     }
   }, [router.query.ref])
 
-  function generateReferralCode() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-    let code = 'AUR'
-    for (let i = 0; i < 8; i++) {
-      code += chars.charAt(Math.floor(Math.random() * chars.length))
-    }
-    return code
-  }
-
   const handleSignUp = async (e) => {
     e.preventDefault()
 
-    const { data, error } = await supabase.auth.signUp({ email, password })
+    // 推荐码存在用户资料里，由数据库函数 init_my_profile 统一处理
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: refCode ? { ref_code: refCode } : {},
+      },
+    })
 
     if (error) {
       setMessage(error.message)
       return
     }
 
-    // 如果有推荐码，建立推荐关系
-    if (refCode && data.user) {
-      try {
-        const { data: referrerId } = await supabase.rpc('find_referrer', { code: refCode })
-
-        if (referrerId) {
-          // 创建 profile，同时写入推荐人
-          const { error: profileError } = await supabase.from('profiles').insert({
-            id: data.user.id,
-            referral_code: generateReferralCode(),
-            membership_level: 'basic',
-            referred_by: referrerId,
-          })
-          if (profileError) console.error('Profile insert error:', profileError)
-
-          // 创建推荐记录
-          const { error: referralError } = await supabase.from('referrals').insert({
-            referrer_id: referrerId,
-            referred_user_id: data.user.id,
-            status: 'pending',
-          })
-          if (referralError) console.error('Referral insert error:', referralError)
-        }
-      } catch (err) {
-        console.error('Referral error:', err)
-      }
+    // 如果注册后已直接登录，立即建立 profile 和推荐关系
+    if (data.session) {
+      const { error: initError } = await supabase.rpc('init_my_profile')
+      if (initError) console.error('Init profile error:', initError)
+      setMessage('Account created! Redirecting...')
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 1500)
+    } else {
+      // 开启了邮箱验证：推荐关系会在用户第一次登录进入 dashboard 时处理
+      setMessage('Account created! Please check your email to confirm, then sign in.')
     }
-
-    setMessage('Account created! Redirecting...')
-    setTimeout(() => {
-      router.push('/dashboard')
-    }, 1500)
   }
 
   return (
