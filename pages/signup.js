@@ -15,48 +15,47 @@ export default function SignUp() {
     }
   }, [router.query.ref])
 
+  function generateReferralCode() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    let code = 'AUR'
+    for (let i = 0; i < 8; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length))
+    }
+    return code
+  }
+
   const handleSignUp = async (e) => {
     e.preventDefault()
-    
+
     const { data, error } = await supabase.auth.signUp({ email, password })
-    
+
     if (error) {
       setMessage(error.message)
       return
     }
 
-    // 如果有推荐码，创建推荐关系记录
+    // 如果有推荐码，建立推荐关系
     if (refCode && data.user) {
       try {
-        // 查找推荐人
-        const { data: referrer } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('referral_code', refCode)
-          .single()
+        const { data: referrerId } = await supabase.rpc('find_referrer', { code: refCode })
 
-        if (referrer) {
-          // 插入 referrals 初始记录
-          const { error: insertError } = await supabase
-            .from('referrals')
-            .insert({
-              referrer_id: referrer.id,
-              referred_user_id: data.user.id,
-              reward_amount: null,
-              reward_type: null,
-              service_type: null,
-              status: 'pending',
-            })
+        if (referrerId) {
+          // 创建 profile，同时写入推荐人
+          const { error: profileError } = await supabase.from('profiles').insert({
+            id: data.user.id,
+            referral_code: generateReferralCode(),
+            membership_level: 'basic',
+            referred_by: referrerId,
+          })
+          if (profileError) console.error('Profile insert error:', profileError)
 
-          if (insertError) {
-            console.error('Referral insert error:', insertError)
-          }
-
-          // 同时更新 profiles 的 referred_by
-          await supabase
-            .from('profiles')
-            .update({ referred_by: referrer.id })
-            .eq('id', data.user.id)
+          // 创建推荐记录
+          const { error: referralError } = await supabase.from('referrals').insert({
+            referrer_id: referrerId,
+            referred_user_id: data.user.id,
+            status: 'pending',
+          })
+          if (referralError) console.error('Referral insert error:', referralError)
         }
       } catch (err) {
         console.error('Referral error:', err)
