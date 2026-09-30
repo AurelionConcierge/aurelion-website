@@ -44,7 +44,7 @@ export default function AdminAI() {
     if (!caregivers.length) return []
     
     let scored = caregivers.map(cg => {
-      let score = 0
+      let score = 0;
       
       // 专长匹配 (+3 per match)
       (cg.specialties || []).forEach(s => {
