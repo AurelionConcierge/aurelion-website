@@ -38,7 +38,7 @@ export default function BookingForm() {
     
     // 存入 Supabase
     try {
-      await supabase.from('bookings').insert({
+      const { error: bookingError } = await supabase.from('bookings').insert({
         service,
         date,
         time,
@@ -47,6 +47,7 @@ export default function BookingForm() {
         email,
         notes,
       })
+      if (bookingError) console.error('Booking save error:', bookingError)
     } catch (err) {
       console.error('Booking save error:', err)
     }
