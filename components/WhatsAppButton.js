@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { PhoneIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { POPUP_EVENT } from './ChatWidget'
 
 const topics = [
   { id: 'general', label: 'General Inquiry', message: 'Hi Aurelion, I would like to know more about your home healthcare services.' },
@@ -15,6 +16,19 @@ export default function WhatsAppButton() {
   const [selectedTopic, setSelectedTopic] = useState(null)
 
   const phoneNumber = '60185959688'
+
+  // 聊天窗打开时，自动关闭 WhatsApp 弹窗（同一时间只开一个）
+  useEffect(() => {
+    const onOtherOpen = (e) => { if (e.detail !== 'whatsapp') setOpen(false) }
+    window.addEventListener(POPUP_EVENT, onOtherOpen)
+    return () => window.removeEventListener(POPUP_EVENT, onOtherOpen)
+  }, [])
+
+  const toggle = () => {
+    const next = !open
+    setOpen(next)
+    if (next) window.dispatchEvent(new CustomEvent(POPUP_EVENT, { detail: 'whatsapp' }))
+  }
 
   const handleSend = () => {
     let message = selectedTopic?.message || 'Hi Aurelion, I need home healthcare assistance.'
@@ -32,7 +46,8 @@ export default function WhatsAppButton() {
     <>
       {/* 主按钮 */}
       <button
-        onClick={() => setOpen(!open)}
+        onClick={toggle}
+        aria-label={open ? 'Close WhatsApp options' : 'Contact us on WhatsApp'}
         className="fixed bottom-24 right-6 bg-green-500 text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center text-2xl z-40 hover:scale-110 transition-transform hover:bg-green-400"
         style={{ boxShadow: '0 4px 20px rgba(34, 197, 94, 0.4)' }}
       >
@@ -41,7 +56,7 @@ export default function WhatsAppButton() {
 
       {/* 弹出窗口 */}
       {open && (
-        <div className="fixed bottom-36 right-6 w-80 bg-[#0F1D32] border border-green-500/20 rounded-2xl shadow-2xl z-40 overflow-hidden">
+        <div className="fixed bottom-40 right-6 w-80 max-w-[calc(100vw-3rem)] bg-[#0F1D32] border border-green-500/20 rounded-2xl shadow-2xl z-40 overflow-hidden">
           {/* 头部 */}
           <div className="bg-green-500 p-4 flex justify-between items-center">
             <div className="flex items-center gap-2">

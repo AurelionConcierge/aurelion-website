@@ -32,25 +32,16 @@ export default function BookingForm() {
   const [notes, setNotes] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [waUrl, setWaUrl] = useState('')
+  const [savedToDb, setSavedToDb] = useState(true)
+
+  // 简单校验马来西亚/国际电话：去掉空格、横线、+ 后应为 9–15 位数字
+  const phoneDigits = phone.replace(/[\s\-+()]/g, '')
+  const phoneValid = /^\d{9,15}$/.test(phoneDigits)
 
   const handleSubmit = async () => {
+    if (loading || !name.trim() || !phoneValid) return
     setLoading(true)
-    
-    // 存入 Supabase
-    try {
-      const { error: bookingError } = await supabase.from('bookings').insert({
-        service,
-        date,
-        time,
-        name,
-        phone,
-        email,
-        notes,
-      })
-      if (bookingError) console.error('Booking save error:', bookingError)
-    } catch (err) {
-      console.error('Booking save error:', err)
-    }
 
     // 生成 WhatsApp 消息
     const message = encodeURIComponent(
@@ -58,17 +49,47 @@ export default function BookingForm() {
       `📋 *Service:* ${service}\n` +
       `📅 *Date:* ${date}\n` +
       `⏰ *Time:* ${time}\n\n` +
-      `👤 *Name:* ${name}\n` +
-      `📞 *Phone:* ${phone}\n` +
-      `📧 *Email:* ${email}\n` +
-      (notes ? `📝 *Notes:* ${notes}\n` : '')
+      `👤 *Name:* ${name.trim()}\n` +
+      `📞 *Phone:* ${phone.trim()}\n` +
+      (email.trim() ? `📧 *Email:* ${email.trim()}\n` : '') +
+      (notes.trim() ? `📝 *Notes:* ${notes.trim()}\n` : '')
     )
+    const url = `https://wa.me/60185959688?text=${message}`
+    setWaUrl(url)
+
+    // 关键修复：必须在用户点击的同一时刻打开窗口，
+    // 等 await 之后再 window.open 会被手机浏览器（尤其 iOS Safari）拦截。
+    const waWindow = window.open('', '_blank')
+
+    // 存入 Supabase
+    let saved = false
+    try {
+      const { error: bookingError } = await supabase.from('bookings').insert({
+        service,
+        date,
+        time,
+        name: name.trim(),
+        phone: phone.trim(),
+        email: email.trim() || null,
+        notes: notes.trim() || null,
+      })
+      if (bookingError) throw bookingError
+      saved = true
+    } catch (err) {
+      console.error('Booking save error:', err)
+    }
+    setSavedToDb(saved)
+
+    // 打开 WhatsApp：优先使用刚才预先打开的窗口；被拦截时在当前页跳转
+    if (waWindow && !waWindow.closed) {
+      waWindow.opener = null
+      waWindow.location.href = url
+    } else {
+      window.location.href = url
+    }
 
     setSubmitted(true)
     setLoading(false)
-
-    // 打开 WhatsApp
-    window.open(`https://wa.me/60185959688?text=${message}`, '_blank')
   }
 
   const reset = () => {
@@ -81,17 +102,28 @@ export default function BookingForm() {
     setEmail('')
     setNotes('')
     setSubmitted(false)
+    setWaUrl('')
+    setSavedToDb(true)
+  }
+
+  // 用本地时区生成 YYYY-MM-DD。
+  // 原来的 toISOString() 是 UTC 时间，在马来西亚早上 8 点前会算错一天。
+  const toLocalDateString = (d) => {
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
   }
 
   // 获取明天的日期作为最小日期
   const tomorrow = new Date()
   tomorrow.setDate(tomorrow.getDate() + 1)
-  const minDate = tomorrow.toISOString().split('T')[0]
+  const minDate = toLocalDateString(tomorrow)
 
   // 最大日期（3个月后）
   const maxDate = new Date()
   maxDate.setMonth(maxDate.getMonth() + 3)
-  const maxDateStr = maxDate.toISOString().split('T')[0]
+  const maxDateStr = toLocalDateString(maxDate)
 
   return (
     <section className="py-24 px-6 relative overflow-hidden" id="booking">
@@ -131,13 +163,28 @@ export default function BookingForm() {
               <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto">
                 <CheckBadgeIcon className="w-8 h-8 text-green-400" />
               </div>
-              <h3 className="text-2xl font-display font-semibold text-white">Booking Submitted!</h3>
+              <h3 className="text-2xl font-display font-semibold text-white">Almost Done!</h3>
               <p className="text-gray-400">
-                We've received your request and sent it to WhatsApp. Our team will confirm within 2 hours.
+                {savedToDb
+                  ? 'We have received your request. Please tap Send in WhatsApp so our team can confirm within 2 hours.'
+                  : 'Please tap Send in WhatsApp to complete your booking. Our team will confirm within 2 hours.'}
               </p>
-              <button onClick={reset} className="btn-gold px-8 py-3">
-                Book Another
-              </button>
+              {waUrl && (
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-gold px-8 py-3 inline-flex items-center gap-2"
+                >
+                  <PhoneIcon className="w-5 h-5" />
+                  WhatsApp didn&apos;t open? Tap here
+                </a>
+              )}
+              <div>
+                <button onClick={reset} className="btn-outline-gold px-8 py-3">
+                  Book Another
+                </button>
+              </div>
             </div>
           )}
 
@@ -253,6 +300,9 @@ export default function BookingForm() {
                         required
                       />
                     </div>
+                    {phone && !phoneValid && (
+                      <p className="text-red-400 text-xs mt-1">Please enter a valid phone number (e.g. 012-345 6789).</p>
+                    )}
                   </div>
 
                   <div>
@@ -295,7 +345,7 @@ export default function BookingForm() {
                     <button onClick={() => setStep(2)} className="btn-outline-gold flex-1 py-4">Back</button>
                     <button
                       onClick={handleSubmit}
-                      disabled={!name || !phone || loading}
+                      disabled={!name.trim() || !phoneValid || loading}
                       className="btn-gold flex-1 py-4 disabled:opacity-50 flex items-center justify-center gap-2"
                     >
                       {loading ? 'Submitting...' : 'Confirm Booking'}

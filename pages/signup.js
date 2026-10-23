@@ -7,6 +7,8 @@ export default function SignUp() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
+  const [isError, setIsError] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [refCode, setRefCode] = useState('')
 
   useEffect(() => {
@@ -17,6 +19,10 @@ export default function SignUp() {
 
   const handleSignUp = async (e) => {
     e.preventDefault()
+    if (loading) return
+    setLoading(true)
+    setMessage('')
+    setIsError(false)
 
     // 推荐码存在用户资料里，由数据库函数 init_my_profile 统一处理
     const { data, error } = await supabase.auth.signUp({
@@ -28,7 +34,10 @@ export default function SignUp() {
     })
 
     if (error) {
+      // 用独立的状态判断成功/失败，不再靠检查文字里有没有 "error"
+      setIsError(true)
       setMessage(error.message)
+      setLoading(false)
       return
     }
 
@@ -43,6 +52,7 @@ export default function SignUp() {
     } else {
       // 开启了邮箱验证：推荐关系会在用户第一次登录进入 dashboard 时处理
       setMessage('Account created! Please check your email to confirm, then sign in.')
+      setLoading(false)
     }
   }
 
@@ -93,13 +103,13 @@ export default function SignUp() {
               />
             </div>
           )}
-          <button type="submit" className="btn-gold w-full py-3 text-base">
-            Create Account
+          <button type="submit" disabled={loading} className="btn-gold w-full py-3 text-base disabled:opacity-50">
+            {loading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
 
         {message && (
-          <p className={`mt-4 text-sm ${message.includes('error') || message.includes('wrong') ? 'text-red-400' : 'text-green-400'}`}>
+          <p className={`mt-4 text-sm ${isError ? 'text-red-400' : 'text-green-400'}`}>
             {message}
           </p>
         )}

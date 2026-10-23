@@ -10,6 +10,9 @@ export default function AICareAdvisor() {
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState(null)
 
+  const ageNum = parseInt(age, 10)
+  const ageValid = Number.isInteger(ageNum) && ageNum >= 1 && ageNum <= 120
+
   const handleSubmit = () => {
     setLoading(true)
     
@@ -93,9 +96,12 @@ export default function AICareAdvisor() {
                 min="1"
                 max="120"
               />
+              {age && !ageValid && (
+                <p className="text-red-400 text-sm -mt-4">Please enter an age between 1 and 120.</p>
+              )}
               <button
-                onClick={() => age && setStep(2)}
-                disabled={!age}
+                onClick={() => ageValid && setStep(2)}
+                disabled={!ageValid}
                 className="btn-gold w-full py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 Next <ArrowRightIcon className="w-5 h-5" />
@@ -165,7 +171,7 @@ export default function AICareAdvisor() {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  disabled={!condition || !bedridden || loading}
+                  disabled={!condition.trim() || !bedridden || loading}
                   className="btn-gold flex-1 py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {loading ? (

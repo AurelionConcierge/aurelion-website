@@ -128,7 +128,7 @@ export default function Home() {
             </div>
             <div className="text-center mt-12">
               <Link href="/services" className="btn-outline-gold inline-flex items-center gap-2">
-                View All 10 Services
+                View All 12 Services
                 <ArrowRightIcon className="w-4 h-4" />
               </Link>
             </div>

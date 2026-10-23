@@ -27,6 +27,8 @@ export default function Admin() {
   const [profiles, setProfiles] = useState([])
   const [referrals, setReferrals] = useState([])
   const [stats, setStats] = useState({ totalBookings: 0, totalUsers: 0, totalReferrals: 0 })
+  // 每条推荐记录由管理员选择“被推荐人实际购买的服务”
+  const [serviceChoice, setServiceChoice] = useState({})
 
   useEffect(() => {
     checkAuth()
@@ -73,9 +75,21 @@ export default function Admin() {
     // 需要知道推荐人等级和下级购买的服务类型
     const referrerProfile = profiles.find(p => p.id === referralRecord.referrer_id)
     const referrerLevel = referrerProfile?.membership_level || 'basic'
-    const serviceType = referralRecord.service_type || 'premium_family'
+    // 不再默认 premium_family：必须由管理员明确选择，避免发错金额
+    const serviceType = serviceChoice[referralRecord.id] || referralRecord.service_type
+    if (!serviceType) {
+      alert('Please select which service the referred customer purchased first.')
+      return
+    }
 
     const reward = getReward(referrerLevel, serviceType)
+    const confirmed = window.confirm(
+      `Issue reward for ${SERVICE_LABELS[serviceType]}?\n\n` +
+      `Referrer level: ${referrerLevel}\n` +
+      `Reward: RM${reward.amount} (${reward.type})` +
+      (reward.delay > 0 ? `\nWithdrawable after ${reward.delay} days` : '')
+    )
+    if (!confirmed) return
     const eligibleDate = reward.delay > 0 ? getEligibleDate(reward.delay, new Date().toISOString()) : null
 
     const { error } = await supabase
@@ -99,7 +113,17 @@ export default function Admin() {
   }
 
   // 标记为可提现（用于 monthly care plan 30天到期后）
-  async function markEligible(referralId) {
+  async function markEligible(referralRecord) {
+    const referralId = referralRecord.id
+    // 检查 30 天等待期是否已过
+    if (referralRecord.eligible_date && new Date(referralRecord.eligible_date) > new Date()) {
+      const dateStr = new Date(referralRecord.eligible_date).toLocaleDateString()
+      const proceed = window.confirm(
+        `This reward is not due until ${dateStr}.\n\nMark it as eligible early anyway?`
+      )
+      if (!proceed) return
+    }
+
     const { error } = await supabase
       .from('referrals')
       .update({ status: 'eligible' })
@@ -350,19 +374,37 @@ export default function Admin() {
                             <td className="py-3 pr-4 text-gray-500 text-xs">{new Date(r.created_at).toLocaleDateString()}</td>
                             <td className="py-3">
                               {r.status === 'pending' && r.reward_amount == null && (
-                                <button
-                                  onClick={() => issueReward(r)}
-                                  className="text-xs bg-[#C5A572]/10 text-[#C5A572] px-2 py-1 rounded hover:bg-[#C5A572]/20"
-                                >
-                                  Issue Reward
-                                </button>
+                                <div className="flex items-center gap-2">
+                                  <select
+                                    value={serviceChoice[r.id] || r.service_type || ''}
+                                    onChange={(e) => setServiceChoice(prev => ({ ...prev, [r.id]: e.target.value }))}
+                                    className="text-xs bg-[#0A1628] border border-gray-700 rounded px-2 py-1 text-gray-300 outline-none"
+                                  >
+                                    <option value="">Service bought…</option>
+                                    {Object.entries(SERVICE_LABELS).map(([key, label]) => (
+                                      <option key={key} value={key}>{label}</option>
+                                    ))}
+                                  </select>
+                                  <button
+                                    onClick={() => issueReward(r)}
+                                    disabled={!(serviceChoice[r.id] || r.service_type)}
+                                    className="text-xs bg-[#C5A572]/10 text-[#C5A572] px-2 py-1 rounded hover:bg-[#C5A572]/20 whitespace-nowrap disabled:opacity-40"
+                                  >
+                                    Issue Reward
+                                  </button>
+                                </div>
                               )}
                               {r.status === 'pending' && r.reward_amount != null && (
                                 <button
-                                  onClick={() => markEligible(r.id)}
+                                  onClick={() => markEligible(r)}
                                   className="text-xs bg-blue-500/10 text-blue-400 px-2 py-1 rounded hover:bg-blue-500/20"
                                 >
                                   Mark Eligible
+                                  {r.eligible_date && new Date(r.eligible_date) > new Date() && (
+                                    <span className="block text-[10px] text-gray-500">
+                                      due {new Date(r.eligible_date).toLocaleDateString()}
+                                    </span>
+                                  )}
                                 </button>
                               )}
                               {r.status === 'eligible' && (
