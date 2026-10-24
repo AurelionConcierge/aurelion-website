@@ -8,7 +8,7 @@ import Head from 'next/head'
 import { useLang } from '../lib/i18n'
 import { SERVICES } from '../lib/content'
 
-// 没有照片的服务使用的图标
+// 还没有照片的服务，在照片位置显示的图标
 const ICONS = {
   dayNight: MoonIcon,
   physio: HandRaisedIcon,
@@ -18,8 +18,6 @@ const ICONS = {
 
 export default function Services() {
   const { t } = useLang()
-  const withPhoto = SERVICES.filter(s => s.image)
-  const withoutPhoto = SERVICES.filter(s => !s.image)
 
   return (
     <>
@@ -42,44 +40,31 @@ export default function Services() {
             })}
           />
 
-          {/* 有照片的服务 */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {withPhoto.map((s) => (
-              <div key={s.key} className="glass-card overflow-hidden group flex flex-col">
-                <div className="relative">
-                  <SmartImage src={s.image} alt={t(s.name)} className="aspect-[16/9]" imgClassName="object-center transition-transform duration-700 group-hover:scale-105" />
-                  <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0F1D32] to-transparent"></div>
-                </div>
-                <div className="p-6 pt-3 flex-1">
-                  <h3 className="text-lg font-semibold mb-3 text-white">{t(s.name)}</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">{t(s.desc)}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* 其他服务（暂时没有照片，用图标显示） */}
-          {withoutPhoto.length > 0 && (
-            <div className="mt-20">
-              <h3 className="text-center text-2xl font-display font-semibold text-white mb-10">
-                {t({ en: 'More Services', zh: '其他服务', ms: 'Perkhidmatan Lain' })}
-              </h3>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {withoutPhoto.map((s) => {
-                  const Icon = ICONS[s.key] || HeartIcon
-                  return (
-                    <div key={s.key} className="glass-card p-7 group">
-                      <div className="w-14 h-14 bg-[#C5A572]/10 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-[#C5A572]/20 transition">
-                        <Icon className="w-7 h-7 text-[#C5A572]" />
+            {SERVICES.map((s) => {
+              const Icon = ICONS[s.key] || HeartIcon
+              return (
+                <div key={s.key} className="glass-card overflow-hidden group flex flex-col">
+                  <div className="relative">
+                    {s.image ? (
+                      <SmartImage src={s.image} alt={t(s.name)} className="aspect-[16/9]" imgClassName="object-center transition-transform duration-700 group-hover:scale-105" />
+                    ) : (
+                      // 暂时没有照片：在同样大小的位置显示金色图标
+                      <div className="aspect-[16/9] bg-gradient-to-br from-[#1a2b45] via-[#13233d] to-[#2a2416] flex items-center justify-center">
+                        <div className="w-20 h-20 rounded-full border border-[#C5A572]/40 bg-[#C5A572]/10 flex items-center justify-center">
+                          <Icon className="w-10 h-10 text-[#C5A572]" />
+                        </div>
                       </div>
-                      <h4 className="text-lg font-semibold mb-3 text-white">{t(s.name)}</h4>
-                      <p className="text-gray-400 text-sm leading-relaxed">{t(s.desc)}</p>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          )}
+                    )}
+                  </div>
+                  <div className="p-6 pt-3 flex-1">
+                    <h3 className="text-lg font-semibold mb-3 text-white">{t(s.name)}</h3>
+                    <p className="text-gray-400 text-sm leading-relaxed">{t(s.desc)}</p>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
 
           <div className="text-center mt-16">
             <Link href="/contact" className="btn-gold inline-flex items-center gap-2 text-lg px-8 py-4">
