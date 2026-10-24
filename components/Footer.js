@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { useLang } from '../lib/i18n'
+import { COVERAGE } from '../lib/content'
 
 export default function Footer() {
   const { t } = useLang()
@@ -52,11 +53,7 @@ export default function Footer() {
               <p>+60 18 595 9688</p>
               <p>care@aurelionconcierge.com</p>
               <p className="mt-3 text-xs text-gray-600">
-                {t({
-                  en: 'Penang · Kuala Lumpur · Melaka · Johor Bahru',
-                  zh: '槟城 · 吉隆坡 · 马六甲 · 新山',
-                  ms: 'Pulau Pinang · Kuala Lumpur · Melaka · Johor Bahru',
-                })}
+                {t(COVERAGE.short)}
               </p>
             </div>
           </div>

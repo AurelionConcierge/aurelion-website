@@ -31,19 +31,19 @@ const RULES = [
     },
   },
   {
+    test: /\b(location|locations|area|areas|where|mana|kawasan|lokasi|cover|penang|pinang|kl|kuala lumpur|selangor|putrajaya|seremban|ipoh|perak|kedah|perlis|melaka|malacca|johor|jb|pahang|kuantan|terengganu|kelantan|singapore|singapura|sg|sabah|sarawak|kuching|kota kinabalu)\b|地区|哪里|槟城|吉隆坡|雪兰莪|马六甲|新山|柔佛|怡保|霹雳|吉打|彭亨|关丹|登嘉楼|吉兰丹|新加坡|沙巴|砂拉越|古晋|亚庇/i,
+    reply: {
+      en: 'We serve every state in Peninsular Malaysia (Northern, Central, Southern and East Coast) as well as Singapore. We do not currently serve Sabah and Sarawak.\n\nCaregivers can usually start within 24-48 hours. WhatsApp us with your location and we will confirm.',
+      zh: '我们服务西马所有州属（北马、中马、南马及东海岸）以及新加坡，目前暂不提供沙巴和砂拉越的服务。\n\n护理员通常可在 24-48 小时内上门。欢迎 WhatsApp 告诉我们您的地点，我们会为您确认。',
+      ms: 'Kami berkhidmat di setiap negeri di Semenanjung Malaysia (Utara, Tengah, Selatan dan Pantai Timur) serta Singapura. Kami belum berkhidmat di Sabah dan Sarawak buat masa ini.\n\nPenjaga biasanya boleh bermula dalam masa 24-48 jam. WhatsApp kami lokasi anda dan kami akan sahkan.',
+    },
+  },
+  {
     test: /\b(services?|perkhidmatan|stroke|strok|dementia|demensia|bedridden|terlantar|nurse|nursing|jururawat|caregiver|penjaga)\b|服务|护理|看护|中风|失智|卧床/i,
     reply: {
       en: 'We offer: 24-Hour Care, 12-Hour Care, Hourly Care, Stroke Care, Dementia Care, Bedridden Care, Post-Hospital Recovery, Night Care, Mobility Rehab, Medication Assistance, Physiotherapy, Medical Escort and Hospital Coordination. Which one are you interested in?',
       zh: '我们提供：24小时看护、12小时护理、按小时护理、中风护理、失智症护理、卧床护理、出院后康复、夜间护理、行动康复、协助用药、居家物理治疗、陪同就医及住院协调。您对哪一项有兴趣？',
       ms: 'Kami menawarkan: Penjagaan 24 Jam, Penjagaan 12 Jam, Penjagaan Mengikut Jam, Penjagaan Strok, Penjagaan Demensia, Penjagaan Terlantar, Pemulihan Selepas Hospital, Penjagaan Malam, Pemulihan Pergerakan, Bantuan Ubat, Fisioterapi, Iringan Perubatan dan Penyelarasan Hospital. Yang mana anda berminat?',
-    },
-  },
-  {
-    test: /\b(location|locations|area|areas|where|mana|kawasan|lokasi|penang|pinang|kl|kuala lumpur|selangor|melaka|malacca|johor|jb)\b|地区|哪里|槟城|吉隆坡|马六甲|新山|雪兰莪/i,
-    reply: {
-      en: 'We serve Penang, Kuala Lumpur, Melaka, and Johor Bahru. Our caregivers can be deployed to your home within 24-48 hours.',
-      zh: '我们的服务地区包括槟城、吉隆坡、马六甲和新山。护理员可在 24-48 小时内上门服务。',
-      ms: 'Kami berkhidmat di Pulau Pinang, Kuala Lumpur, Melaka dan Johor Bahru. Penjaga kami boleh ditempatkan di rumah anda dalam masa 24-48 jam.',
     },
   },
   {
