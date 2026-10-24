@@ -1,5 +1,5 @@
 /* @import 必须放在文件最前面，否则浏览器会忽略它，字体不会加载 */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -22,14 +22,30 @@
 body {
   background: var(--dark-deep);
   color: #FFFFFF;
-  font-family: 'Inter', sans-serif;
+  /* 中文自动使用系统中文字体（苹方、微软雅黑等） */
+  font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* 自定义字体类 */
 .font-display {
-  font-family: 'Playfair Display', serif;
+  /* 英文用 Playfair Display；中文自动使用 Noto Serif SC（思源宋体） */
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+}
+
+/* 中文标题字距稍微收紧，避免显得松散 */
+html[lang='zh-Hans'] .font-display {
+  letter-spacing: 0.02em;
+}
+
+/* 弹窗淡入 */
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-pop-in {
+  animation: popIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 /* 光晕背景 */
@@ -109,7 +125,7 @@ body {
 
 /* 数字样式 */
 .stat-number {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
   font-size: 2.5rem;
   font-weight: 700;
   color: #C5A572;
