@@ -3,13 +3,43 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Bars3Icon, XMarkIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { supabase } from '../lib/supabase'
+import { useLang, LANGS } from '../lib/i18n'
 
 const adminEmails = ['eztradetoday@gmail.com', 'care@aurelionconcierge.com']
+
+const NAV = [
+  { href: '/services', label: { en: 'Services', zh: '服务', ms: 'Perkhidmatan' } },
+  { href: '/pricing', label: { en: 'Pricing', zh: '价格', ms: 'Harga' } },
+  { href: '/vip', label: { en: 'VIP', zh: 'VIP', ms: 'VIP' } },
+  { href: '/contact', label: { en: 'Contact', zh: '联系我们', ms: 'Hubungi' } },
+]
+
+export function LanguageSwitcher({ className = '' }) {
+  const { lang, setLang } = useLang()
+  return (
+    <div className={`inline-flex items-center rounded-full border border-[#C5A572]/30 p-0.5 normal-case tracking-normal ${className}`} role="group" aria-label="Language">
+      {LANGS.map(l => (
+        <button
+          key={l.code}
+          onClick={() => setLang(l.code)}
+          aria-pressed={lang === l.code}
+          title={l.name}
+          className={`px-2.5 py-1 rounded-full text-xs font-medium transition ${
+            lang === l.code ? 'bg-[#C5A572] text-[#0A1628]' : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          {l.label}
+        </button>
+      ))}
+    </div>
+  )
+}
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [user, setUser] = useState(null)
   const router = useRouter()
+  const { t } = useLang()
 
   useEffect(() => {
     checkUser()
@@ -31,12 +61,17 @@ export default function Navbar() {
   }
 
   const isAdmin = user && adminEmails.includes(user.email)
+  const labels = {
+    dashboard: { en: 'Dashboard', zh: '会员中心', ms: 'Papan Pemuka' },
+    logout: { en: 'Logout', zh: '退出', ms: 'Log Keluar' },
+    login: { en: 'Member Login', zh: '会员登录', ms: 'Log Masuk Ahli' },
+  }
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0A1628]/90 backdrop-blur-xl border-b border-[#C5A572]/10">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center gap-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
+        <Link href="/" className="flex items-center gap-2 group shrink-0">
           <div className="w-8 h-8 bg-gradient-to-br from-[#C5A572] to-[#E2C99D] rounded-lg flex items-center justify-center">
             <span className="text-[#0A1628] font-bold text-sm">A</span>
           </div>
@@ -44,12 +79,11 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8 text-sm uppercase tracking-widest text-gray-400">
-          <Link href="/services" className="hover:text-[#C5A572] transition-colors">Services</Link>
-          <Link href="/pricing" className="hover:text-[#C5A572] transition-colors">Pricing</Link>
-          <Link href="/vip" className="hover:text-[#C5A572] transition-colors">VIP</Link>
-          <Link href="/contact" className="hover:text-[#C5A572] transition-colors">Contact</Link>
-          
+        <div className="hidden lg:flex items-center gap-7 text-sm uppercase tracking-widest text-gray-400">
+          {NAV.map(item => (
+            <Link key={item.href} href={item.href} className="hover:text-[#C5A572] transition-colors">{t(item.label)}</Link>
+          ))}
+
           {user ? (
             <div className="flex items-center gap-4">
               {isAdmin && (
@@ -59,40 +93,44 @@ export default function Navbar() {
               )}
               <Link href="/dashboard" className="flex items-center gap-2 text-[#C5A572] hover:text-white transition">
                 <UserCircleIcon className="w-5 h-5" />
-                Dashboard
+                {t(labels.dashboard)}
               </Link>
               <button onClick={handleLogout} className="text-gray-500 hover:text-red-400 transition text-xs">
-                Logout
+                {t(labels.logout)}
               </button>
             </div>
           ) : (
-            <Link href="/login" className="btn-gold !py-2 !px-5 !text-xs">Member Login</Link>
+            <Link href="/login" className="btn-gold !py-2 !px-5 !text-xs">{t(labels.login)}</Link>
           )}
+
+          <LanguageSwitcher />
         </div>
 
-        {/* Mobile Toggle */}
-        <button className="md:hidden text-white" onClick={() => setMobileOpen(!mobileOpen)}>
-          {mobileOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
-        </button>
+        {/* Mobile: language + menu toggle */}
+        <div className="lg:hidden flex items-center gap-3">
+          <LanguageSwitcher />
+          <button className="text-white" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Menu">
+            {mobileOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-[#0A1628]/95 backdrop-blur-xl border-t border-[#C5A572]/10 px-6 py-4 space-y-4">
-          <Link href="/services" className="block text-gray-400 hover:text-[#C5A572] transition" onClick={() => setMobileOpen(false)}>Services</Link>
-          <Link href="/pricing" className="block text-gray-400 hover:text-[#C5A572] transition" onClick={() => setMobileOpen(false)}>Pricing</Link>
-          <Link href="/vip" className="block text-gray-400 hover:text-[#C5A572] transition" onClick={() => setMobileOpen(false)}>VIP</Link>
-          <Link href="/contact" className="block text-gray-400 hover:text-[#C5A572] transition" onClick={() => setMobileOpen(false)}>Contact</Link>
+        <div className="lg:hidden bg-[#0A1628]/95 backdrop-blur-xl border-t border-[#C5A572]/10 px-6 py-4 space-y-4">
+          {NAV.map(item => (
+            <Link key={item.href} href={item.href} className="block text-gray-400 hover:text-[#C5A572] transition" onClick={() => setMobileOpen(false)}>{t(item.label)}</Link>
+          ))}
           {user ? (
             <>
               {isAdmin && (
                 <Link href="/admin" className="block text-gray-500 hover:text-[#C5A572] transition" onClick={() => setMobileOpen(false)}>Admin</Link>
               )}
-              <Link href="/dashboard" className="block text-[#C5A572] hover:text-white transition" onClick={() => setMobileOpen(false)}>Dashboard</Link>
-              <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="block text-gray-500 hover:text-red-400 transition">Logout</button>
+              <Link href="/dashboard" className="block text-[#C5A572] hover:text-white transition" onClick={() => setMobileOpen(false)}>{t(labels.dashboard)}</Link>
+              <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="block text-gray-500 hover:text-red-400 transition">{t(labels.logout)}</button>
             </>
           ) : (
-            <Link href="/login" className="btn-gold w-full block text-center" onClick={() => setMobileOpen(false)}>Member Login</Link>
+            <Link href="/login" className="btn-gold w-full block text-center" onClick={() => setMobileOpen(false)}>{t(labels.login)}</Link>
           )}
         </div>
       )}

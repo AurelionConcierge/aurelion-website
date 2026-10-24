@@ -1,18 +1,21 @@
 import { useState } from 'react'
 import { CalendarDaysIcon, ClockIcon, UserIcon, PhoneIcon, EnvelopeIcon, PencilSquareIcon, CheckBadgeIcon } from '@heroicons/react/24/outline'
 import { supabase } from '../lib/supabase'
+import { useLang, LANGS } from '../lib/i18n'
+import { WHATSAPP_NUMBER } from '../lib/content'
 
+// en 存入数据库、发给团队；其他语言只用于显示
 const services = [
-  '24-Hour Stay-In Care',
-  '12-Hour Care',
-  'Hourly Care',
-  'Stroke Care',
-  'Dementia Care',
-  'Bedridden Care',
-  'Post-Hospital Recovery',
-  'Night Care',
-  'Mobility & Rehabilitation Support',
-  'Medication Assistance',
+  { en: '24-Hour Stay-In Care', zh: '24小时住家看护', ms: 'Penjagaan Tinggal Bersama 24 Jam' },
+  { en: '12-Hour Care', zh: '12小时护理', ms: 'Penjagaan 12 Jam' },
+  { en: 'Hourly Care', zh: '按小时护理', ms: 'Penjagaan Mengikut Jam' },
+  { en: 'Stroke Care', zh: '中风护理', ms: 'Penjagaan Strok' },
+  { en: 'Dementia Care', zh: '失智症护理', ms: 'Penjagaan Demensia' },
+  { en: 'Bedridden Care', zh: '卧床护理', ms: 'Penjagaan Pesakit Terlantar' },
+  { en: 'Post-Hospital Recovery', zh: '出院后康复', ms: 'Pemulihan Selepas Hospital' },
+  { en: 'Night Care', zh: '夜间护理', ms: 'Penjagaan Malam' },
+  { en: 'Mobility & Rehabilitation Support', zh: '行动与康复协助', ms: 'Sokongan Pergerakan & Pemulihan' },
+  { en: 'Medication Assistance', zh: '协助用药', ms: 'Bantuan Ubat' },
 ]
 
 const timeSlots = [
@@ -22,8 +25,9 @@ const timeSlots = [
 ]
 
 export default function BookingForm() {
+  const { t, lang } = useLang()
   const [step, setStep] = useState(1)
-  const [service, setService] = useState('')
+  const [service, setService] = useState(null)
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [name, setName] = useState('')
@@ -40,32 +44,34 @@ export default function BookingForm() {
   const phoneValid = /^\d{9,15}$/.test(phoneDigits)
 
   const handleSubmit = async () => {
-    if (loading || !name.trim() || !phoneValid) return
+    if (loading || !service || !name.trim() || !phoneValid) return
     setLoading(true)
 
-    // 生成 WhatsApp 消息
+    const langName = LANGS.find(l => l.code === lang)?.name || 'English'
+
+    // 发给团队的 WhatsApp 消息保持英文，并注明客户使用的语言
     const message = encodeURIComponent(
       `🌟 *New Booking Request*\n\n` +
-      `📋 *Service:* ${service}\n` +
+      `📋 *Service:* ${service.en}\n` +
       `📅 *Date:* ${date}\n` +
       `⏰ *Time:* ${time}\n\n` +
       `👤 *Name:* ${name.trim()}\n` +
       `📞 *Phone:* ${phone.trim()}\n` +
       (email.trim() ? `📧 *Email:* ${email.trim()}\n` : '') +
-      (notes.trim() ? `📝 *Notes:* ${notes.trim()}\n` : '')
+      (notes.trim() ? `📝 *Notes:* ${notes.trim()}\n` : '') +
+      `🗣 *Language:* ${langName}\n`
     )
-    const url = `https://wa.me/60185959688?text=${message}`
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`
     setWaUrl(url)
 
-    // 关键修复：必须在用户点击的同一时刻打开窗口，
+    // 必须在用户点击的同一时刻打开窗口，
     // 等 await 之后再 window.open 会被手机浏览器（尤其 iOS Safari）拦截。
     const waWindow = window.open('', '_blank')
 
-    // 存入 Supabase
     let saved = false
     try {
       const { error: bookingError } = await supabase.from('bookings').insert({
-        service,
+        service: service.en,
         date,
         time,
         name: name.trim(),
@@ -80,7 +86,6 @@ export default function BookingForm() {
     }
     setSavedToDb(saved)
 
-    // 打开 WhatsApp：优先使用刚才预先打开的窗口；被拦截时在当前页跳转
     if (waWindow && !waWindow.closed) {
       waWindow.opener = null
       waWindow.location.href = url
@@ -94,7 +99,7 @@ export default function BookingForm() {
 
   const reset = () => {
     setStep(1)
-    setService('')
+    setService(null)
     setDate('')
     setTime('')
     setName('')
@@ -106,8 +111,7 @@ export default function BookingForm() {
     setSavedToDb(true)
   }
 
-  // 用本地时区生成 YYYY-MM-DD。
-  // 原来的 toISOString() 是 UTC 时间，在马来西亚早上 8 点前会算错一天。
+  // 用本地时区生成 YYYY-MM-DD（toISOString 是 UTC，马来西亚早上 8 点前会算错一天）
   const toLocalDateString = (d) => {
     const y = d.getFullYear()
     const m = String(d.getMonth() + 1).padStart(2, '0')
@@ -115,74 +119,77 @@ export default function BookingForm() {
     return `${y}-${m}-${day}`
   }
 
-  // 获取明天的日期作为最小日期
   const tomorrow = new Date()
   tomorrow.setDate(tomorrow.getDate() + 1)
   const minDate = toLocalDateString(tomorrow)
 
-  // 最大日期（3个月后）
   const maxDate = new Date()
   maxDate.setMonth(maxDate.getMonth() + 3)
   const maxDateStr = toLocalDateString(maxDate)
+
+  const L = {
+    back: { en: 'Back', zh: '返回', ms: 'Kembali' },
+    next: { en: 'Next', zh: '下一步', ms: 'Seterusnya' },
+  }
 
   return (
     <section className="py-24 px-6 relative overflow-hidden" id="booking">
       <div className="absolute inset-0 bg-gradient-to-b from-[#060F1E]/50 via-transparent to-[#060F1E]/50"></div>
 
       <div className="max-w-2xl mx-auto relative z-10">
-        {/* 标题 */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-[#C5A572]/10 border border-[#C5A572]/20 rounded-full px-5 py-2 text-sm text-[#C5A572] mb-6">
             <CalendarDaysIcon className="w-5 h-5" />
-            <span className="uppercase tracking-wider font-medium">Online Booking</span>
+            <span className="uppercase tracking-wider font-medium">{t({ en: 'Online Booking', zh: '网上预约', ms: 'Tempahan Dalam Talian' })}</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-display font-semibold mb-4">
-            Book a <span className="text-gradient">Consultation</span>
+            {t({ en: 'Book a', zh: '预约', ms: 'Tempah' })}{t({ en: ' ', zh: '', ms: ' ' })}
+            <span className="text-gradient">{t({ en: 'Consultation', zh: '免费咨询', ms: 'Konsultasi' })}</span>
           </h2>
           <p className="text-gray-400 text-lg">
-            Schedule a free consultation. We'll confirm within 2 hours.
+            {t({
+              en: "Schedule a free consultation. We'll confirm within 2 hours.",
+              zh: '预约免费咨询，我们会在 2 小时内确认。',
+              ms: 'Jadualkan konsultasi percuma. Kami akan mengesahkan dalam masa 2 jam.',
+            })}
           </p>
         </div>
 
-        {/* 步骤指示器 */}
         <div className="flex justify-center gap-2 mb-12">
           {[1, 2, 3].map((s) => (
-            <div
-              key={s}
-              className={`w-10 h-1.5 rounded-full transition-all duration-500 ${
-                step >= s ? 'bg-[#C5A572] w-12' : 'bg-gray-700'
-              }`}
-            ></div>
+            <div key={s} className={`w-10 h-1.5 rounded-full transition-all duration-500 ${step >= s ? 'bg-[#C5A572] w-12' : 'bg-gray-700'}`}></div>
           ))}
         </div>
 
         <div className="glass-card p-8 md:p-12 border-[#C5A572]/20">
-          {/* 提交成功 */}
           {submitted && (
             <div className="text-center space-y-6 animate-fade-in-up">
               <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto">
                 <CheckBadgeIcon className="w-8 h-8 text-green-400" />
               </div>
-              <h3 className="text-2xl font-display font-semibold text-white">Almost Done!</h3>
+              <h3 className="text-2xl font-display font-semibold text-white">{t({ en: 'Almost Done!', zh: '快完成了！', ms: 'Hampir Siap!' })}</h3>
               <p className="text-gray-400">
                 {savedToDb
-                  ? 'We have received your request. Please tap Send in WhatsApp so our team can confirm within 2 hours.'
-                  : 'Please tap Send in WhatsApp to complete your booking. Our team will confirm within 2 hours.'}
+                  ? t({
+                      en: 'We have received your request. Please tap Send in WhatsApp so our team can confirm within 2 hours.',
+                      zh: '我们已收到您的预约。请在 WhatsApp 里按「发送」，我们的团队会在 2 小时内确认。',
+                      ms: 'Kami telah menerima permintaan anda. Sila tekan Hantar di WhatsApp supaya pasukan kami boleh mengesahkan dalam masa 2 jam.',
+                    })
+                  : t({
+                      en: 'Please tap Send in WhatsApp to complete your booking. Our team will confirm within 2 hours.',
+                      zh: '请在 WhatsApp 里按「发送」完成预约，我们的团队会在 2 小时内确认。',
+                      ms: 'Sila tekan Hantar di WhatsApp untuk melengkapkan tempahan. Pasukan kami akan mengesahkan dalam masa 2 jam.',
+                    })}
               </p>
               {waUrl && (
-                <a
-                  href={waUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn-gold px-8 py-3 inline-flex items-center gap-2"
-                >
+                <a href={waUrl} target="_blank" rel="noreferrer" className="btn-gold px-8 py-3 inline-flex items-center gap-2">
                   <PhoneIcon className="w-5 h-5" />
-                  WhatsApp didn&apos;t open? Tap here
+                  {t({ en: "WhatsApp didn't open? Tap here", zh: 'WhatsApp 没打开？点这里', ms: 'WhatsApp tidak dibuka? Tekan di sini' })}
                 </a>
               )}
               <div>
                 <button onClick={reset} className="btn-outline-gold px-8 py-3">
-                  Book Another
+                  {t({ en: 'Book Another', zh: '再预约一次', ms: 'Tempah Lagi' })}
                 </button>
               </div>
             </div>
@@ -190,35 +197,35 @@ export default function BookingForm() {
 
           {!submitted && (
             <>
-              {/* STEP 1: 选择服务 */}
+              {/* STEP 1 */}
               {step === 1 && (
                 <div className="space-y-6 animate-fade-in-up">
-                  <h3 className="text-xl font-semibold text-white mb-4">Select Service</h3>
+                  <h3 className="text-xl font-semibold text-white mb-4">{t({ en: 'Select Service', zh: '选择服务', ms: 'Pilih Perkhidmatan' })}</h3>
                   <div className="grid gap-3 max-h-64 overflow-y-auto">
                     {services.map((s) => (
                       <button
-                        key={s}
+                        key={s.en}
                         onClick={() => { setService(s); setStep(2) }}
                         className={`text-left px-4 py-3 rounded-xl border transition ${
-                          service === s
+                          service?.en === s.en
                             ? 'border-[#C5A572] bg-[#C5A572]/10 text-[#C5A572]'
                             : 'border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white'
                         }`}
                       >
-                        {s}
+                        {t(s)}
                       </button>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* STEP 2: 日期和时间 */}
+              {/* STEP 2 */}
               {step === 2 && (
                 <div className="space-y-8 animate-fade-in-up">
                   <div>
                     <div className="flex items-center gap-3 mb-4">
                       <CalendarDaysIcon className="w-6 h-6 text-[#C5A572]" />
-                      <h3 className="text-xl font-semibold text-white">Select Date</h3>
+                      <h3 className="text-xl font-semibold text-white">{t({ en: 'Select Date', zh: '选择日期', ms: 'Pilih Tarikh' })}</h3>
                     </div>
                     <input
                       type="date"
@@ -234,20 +241,20 @@ export default function BookingForm() {
                     <div>
                       <div className="flex items-center gap-3 mb-4">
                         <ClockIcon className="w-6 h-6 text-[#C5A572]" />
-                        <h3 className="text-xl font-semibold text-white">Select Time</h3>
+                        <h3 className="text-xl font-semibold text-white">{t({ en: 'Select Time', zh: '选择时间', ms: 'Pilih Masa' })}</h3>
                       </div>
                       <div className="grid grid-cols-3 gap-2">
-                        {timeSlots.map((t) => (
+                        {timeSlots.map((ts) => (
                           <button
-                            key={t}
-                            onClick={() => setTime(t)}
+                            key={ts}
+                            onClick={() => setTime(ts)}
                             className={`py-2.5 rounded-lg text-sm border transition ${
-                              time === t
+                              time === ts
                                 ? 'border-[#C5A572] bg-[#C5A572]/10 text-[#C5A572]'
                                 : 'border-gray-700 text-gray-400 hover:border-gray-500'
                             }`}
                           >
-                            {t}
+                            {ts}
                           </button>
                         ))}
                       </div>
@@ -255,30 +262,30 @@ export default function BookingForm() {
                   )}
 
                   <div className="flex gap-4">
-                    <button onClick={() => setStep(1)} className="btn-outline-gold flex-1 py-4">Back</button>
+                    <button onClick={() => setStep(1)} className="btn-outline-gold flex-1 py-4">{t(L.back)}</button>
                     <button
                       onClick={() => date && time && setStep(3)}
                       disabled={!date || !time}
                       className="btn-gold flex-1 py-4 disabled:opacity-50"
                     >
-                      Next
+                      {t(L.next)}
                     </button>
                   </div>
                 </div>
               )}
 
-              {/* STEP 3: 联系信息 */}
+              {/* STEP 3 */}
               {step === 3 && (
                 <div className="space-y-6 animate-fade-in-up">
-                  <h3 className="text-xl font-semibold text-white mb-4">Your Details</h3>
+                  <h3 className="text-xl font-semibold text-white mb-4">{t({ en: 'Your Details', zh: '您的资料', ms: 'Butiran Anda' })}</h3>
 
                   <div>
-                    <label className="text-gray-400 text-sm mb-1 block">Full Name *</label>
+                    <label className="text-gray-400 text-sm mb-1 block">{t({ en: 'Full Name *', zh: '姓名 *', ms: 'Nama Penuh *' })}</label>
                     <div className="flex items-center gap-2 bg-[#0A1628] border border-gray-700 focus-within:border-[#C5A572] rounded-xl px-4 transition">
                       <UserIcon className="w-5 h-5 text-gray-500" />
                       <input
                         type="text"
-                        placeholder="Your full name"
+                        placeholder={t({ en: 'Your full name', zh: '您的姓名', ms: 'Nama penuh anda' })}
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         className="flex-1 bg-transparent py-3 text-white outline-none"
@@ -288,12 +295,12 @@ export default function BookingForm() {
                   </div>
 
                   <div>
-                    <label className="text-gray-400 text-sm mb-1 block">Phone Number *</label>
+                    <label className="text-gray-400 text-sm mb-1 block">{t({ en: 'Phone Number *', zh: '电话号码 *', ms: 'Nombor Telefon *' })}</label>
                     <div className="flex items-center gap-2 bg-[#0A1628] border border-gray-700 focus-within:border-[#C5A572] rounded-xl px-4 transition">
                       <PhoneIcon className="w-5 h-5 text-gray-500" />
                       <input
                         type="tel"
-                        placeholder="e.g., 0123456789"
+                        placeholder={t({ en: 'e.g., 0123456789', zh: '例如：0123456789', ms: 'cth., 0123456789' })}
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         className="flex-1 bg-transparent py-3 text-white outline-none"
@@ -301,12 +308,18 @@ export default function BookingForm() {
                       />
                     </div>
                     {phone && !phoneValid && (
-                      <p className="text-red-400 text-xs mt-1">Please enter a valid phone number (e.g. 012-345 6789).</p>
+                      <p className="text-red-400 text-xs mt-1">
+                        {t({
+                          en: 'Please enter a valid phone number (e.g. 012-345 6789).',
+                          zh: '请输入有效的电话号码（例如 012-345 6789）。',
+                          ms: 'Sila masukkan nombor telefon yang sah (cth. 012-345 6789).',
+                        })}
+                      </p>
                     )}
                   </div>
 
                   <div>
-                    <label className="text-gray-400 text-sm mb-1 block">Email (optional)</label>
+                    <label className="text-gray-400 text-sm mb-1 block">{t({ en: 'Email (optional)', zh: '电邮（选填）', ms: 'E-mel (pilihan)' })}</label>
                     <div className="flex items-center gap-2 bg-[#0A1628] border border-gray-700 focus-within:border-[#C5A572] rounded-xl px-4 transition">
                       <EnvelopeIcon className="w-5 h-5 text-gray-500" />
                       <input
@@ -320,11 +333,11 @@ export default function BookingForm() {
                   </div>
 
                   <div>
-                    <label className="text-gray-400 text-sm mb-1 block">Notes (optional)</label>
+                    <label className="text-gray-400 text-sm mb-1 block">{t({ en: 'Notes (optional)', zh: '备注（选填）', ms: 'Catatan (pilihan)' })}</label>
                     <div className="flex items-start gap-2 bg-[#0A1628] border border-gray-700 focus-within:border-[#C5A572] rounded-xl px-4 transition">
                       <PencilSquareIcon className="w-5 h-5 text-gray-500 mt-3" />
                       <textarea
-                        placeholder="Any special requirements or details..."
+                        placeholder={t({ en: 'Any special requirements or details...', zh: '任何特别要求或详情……', ms: 'Sebarang keperluan atau butiran khas...' })}
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                         rows={3}
@@ -333,22 +346,23 @@ export default function BookingForm() {
                     </div>
                   </div>
 
-                  {/* 预约摘要 */}
                   <div className="bg-[#0A1628]/80 rounded-xl p-4 border border-gray-800">
-                    <p className="text-gray-400 text-xs uppercase tracking-wider mb-2">Booking Summary</p>
-                    <p className="text-white text-sm"><span className="text-gray-500">Service:</span> {service}</p>
-                    <p className="text-white text-sm"><span className="text-gray-500">Date:</span> {date}</p>
-                    <p className="text-white text-sm"><span className="text-gray-500">Time:</span> {time}</p>
+                    <p className="text-gray-400 text-xs uppercase tracking-wider mb-2">{t({ en: 'Booking Summary', zh: '预约摘要', ms: 'Ringkasan Tempahan' })}</p>
+                    <p className="text-white text-sm"><span className="text-gray-500">{t({ en: 'Service:', zh: '服务：', ms: 'Perkhidmatan:' })}</span> {service && t(service)}</p>
+                    <p className="text-white text-sm"><span className="text-gray-500">{t({ en: 'Date:', zh: '日期：', ms: 'Tarikh:' })}</span> {date}</p>
+                    <p className="text-white text-sm"><span className="text-gray-500">{t({ en: 'Time:', zh: '时间：', ms: 'Masa:' })}</span> {time}</p>
                   </div>
 
                   <div className="flex gap-4">
-                    <button onClick={() => setStep(2)} className="btn-outline-gold flex-1 py-4">Back</button>
+                    <button onClick={() => setStep(2)} className="btn-outline-gold flex-1 py-4">{t(L.back)}</button>
                     <button
                       onClick={handleSubmit}
                       disabled={!name.trim() || !phoneValid || loading}
                       className="btn-gold flex-1 py-4 disabled:opacity-50 flex items-center justify-center gap-2"
                     >
-                      {loading ? 'Submitting...' : 'Confirm Booking'}
+                      {loading
+                        ? t({ en: 'Submitting...', zh: '提交中……', ms: 'Menghantar...' })
+                        : t({ en: 'Confirm Booking', zh: '确认预约', ms: 'Sahkan Tempahan' })}
                     </button>
                   </div>
                 </div>
