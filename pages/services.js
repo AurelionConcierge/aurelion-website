@@ -22,8 +22,8 @@ export default function Services() {
   return (
     <>
       <Head>
-        <title>Home Care Services Malaysia | 24-Hour Nursing, Dementia and Stroke Care</title>
-        <meta name="description" content="Professional home healthcare services across Malaysia. 24-hour nursing, dementia care, stroke recovery, bedridden patient care, elderly companion. All with concierge-level service. Serving Penang, KL, Melaka, JB." />
+        <title>Home Care Services Malaysia &amp; Singapore | 24-Hour Nursing, Dementia and Stroke Care</title>
+        <meta name="description" content="Professional home healthcare services across Peninsular Malaysia and Singapore. 24-hour nursing, dementia care, stroke recovery, bedridden patient care, elderly companion. All with concierge-level service." />
         <link rel="canonical" href="https://aurelionconcierge.com/services" />
       </Head>
 
@@ -34,9 +34,9 @@ export default function Services() {
             subtitle={t({ en: 'Our Expertise', zh: '我们的专长', ms: 'Kepakaran Kami' })}
             title={t({ en: 'Complete Home Healthcare Services', zh: '全方位居家护理服务', ms: 'Perkhidmatan Penjagaan Kesihatan di Rumah yang Lengkap' })}
             description={t({
-              en: 'Every service is delivered by trained, background-checked professionals who treat your loved one like family. Available across Penang, KL, Melaka and JB.',
-              zh: '每项服务都由受过训练、通过背景审查的专业人员提供，像对待家人一样照顾您的亲人。服务覆盖槟城、吉隆坡、马六甲和新山。',
-              ms: 'Setiap perkhidmatan diberikan oleh profesional terlatih yang telah melalui semakan latar belakang, yang menjaga insan tersayang anda seperti keluarga sendiri. Tersedia di Pulau Pinang, KL, Melaka dan JB.',
+              en: 'Every service is delivered by trained, background-checked professionals who treat your loved one like family. Available across Peninsular Malaysia and Singapore.',
+              zh: '每项服务都由受过训练、通过背景审查的专业人员提供，像对待家人一样照顾您的亲人。服务覆盖西马全境及新加坡。',
+              ms: 'Setiap perkhidmatan diberikan oleh profesional terlatih yang telah melalui semakan latar belakang, yang menjaga insan tersayang anda seperti keluarga sendiri. Tersedia di seluruh Semenanjung Malaysia dan Singapura.',
             })}
           />
 

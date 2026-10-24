@@ -10,7 +10,7 @@ import PromoPopup from '../components/PromoPopup'
 import SmartImage from '../components/SmartImage'
 import { useLang } from '../lib/i18n'
 import { IMAGES, OG_IMAGE } from '../lib/images'
-import { SERVICES, HOME_SERVICE_KEYS, CITIES, WHATSAPP_NUMBER } from '../lib/content'
+import { SERVICES, HOME_SERVICE_KEYS, CITIES, COVERAGE, WHATSAPP_NUMBER } from '../lib/content'
 import {
   ShieldCheckIcon,
   ClockIcon,
@@ -102,11 +102,11 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Private Home Healthcare Malaysia | Aurelion Concierge Care</title>
-        <meta name="description" content="Premium private home healthcare services in Penang, KL, Melaka & JB. 24-hour care, dementia & stroke recovery, post-hospital care. VIP concierge-level nursing at home. Free consultation." />
-        <meta name="keywords" content="home healthcare Malaysia, private nurse Malaysia, dementia care Penang, stroke recovery KL, elderly care JB, home nursing Melaka, 24 hour caregiver, post hospital care Malaysia, 居家护理, 看护, penjagaan di rumah" />
-        <meta property="og:title" content="Private Home Healthcare Malaysia | Aurelion Concierge Care" />
-        <meta property="og:description" content="Premium private home healthcare with VIP concierge service. 24-hour managed care across Penang, KL, Melaka & JB." />
+        <title>Private Home Healthcare Malaysia &amp; Singapore | Aurelion Concierge Care</title>
+        <meta name="description" content="Premium private home healthcare across Peninsular Malaysia and Singapore. 24-hour care, dementia & stroke recovery, post-hospital care. VIP concierge-level nursing at home. Free consultation." />
+        <meta name="keywords" content="home healthcare Malaysia, home care Singapore, private nurse Malaysia, private nurse Singapore, dementia care, stroke recovery, elderly care, 24 hour caregiver, post hospital care, 居家护理, 看护, 新加坡居家护理, penjagaan di rumah" />
+        <meta property="og:title" content="Private Home Healthcare Malaysia &amp; Singapore | Aurelion Concierge Care" />
+        <meta property="og:description" content="Premium private home healthcare with VIP concierge service. 24-hour managed care across Peninsular Malaysia and Singapore." />
         <meta property="og:type" content="website" />
         <meta property="og:image" content={OG_IMAGE} />
         <meta name="twitter:card" content="summary_large_image" />
@@ -127,7 +127,7 @@ export default function Home() {
             <div className="animate-fade-in-up">
               <div className="inline-flex items-center gap-2 bg-[#0A1628]/60 backdrop-blur border border-[#C5A572]/30 rounded-full px-4 py-2 text-xs text-[#C5A572] uppercase tracking-wider mb-8">
                 <SparklesIcon className="w-4 h-4" />
-                {t({ en: "Malaysia's Premium Home Healthcare", zh: '马来西亚高端居家护理', ms: 'Penjagaan Kesihatan di Rumah Premium Malaysia' })}
+                {t({ en: 'Premium Home Healthcare · Malaysia & Singapore', zh: '马来西亚与新加坡高端居家护理', ms: 'Penjagaan Kesihatan di Rumah Premium · Malaysia & Singapura' })}
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-semibold leading-tight mb-8">
                 {t({ en: 'Your Loved Ones Deserve', zh: '您的至亲，值得', ms: 'Insan Tersayang Anda Layak' })}{t({ en: ' ', zh: '', ms: ' ' })}
@@ -135,9 +135,9 @@ export default function Home() {
               </h1>
               <p className="text-gray-300 text-lg md:text-xl mb-10 max-w-lg leading-relaxed">
                 {t({
-                  en: 'Private nursing, elderly care, and post-hospital recovery — delivered with 5-star concierge service across Penang, KL, Melaka, and Johor Bahru.',
-                  zh: '私人护理、长者照护及出院后康复，以五星级礼宾服务，覆盖槟城、吉隆坡、马六甲和新山。',
-                  ms: 'Kejururawatan peribadi, penjagaan warga emas dan pemulihan selepas hospital — dengan perkhidmatan concierge 5 bintang di Pulau Pinang, KL, Melaka dan Johor Bahru.',
+                  en: 'Private nursing, elderly care, and post-hospital recovery — delivered with 5-star concierge service across Peninsular Malaysia and Singapore.',
+                  zh: '私人护理、长者照护及出院后康复，以五星级礼宾服务，覆盖西马全境及新加坡。',
+                  ms: 'Kejururawatan peribadi, penjagaan warga emas dan pemulihan selepas hospital — dengan perkhidmatan concierge 5 bintang di seluruh Semenanjung Malaysia dan Singapura.',
                 })}
               </p>
               <div className="flex flex-wrap gap-4">
@@ -169,7 +169,7 @@ export default function Home() {
                 <ShieldCheckIcon className="w-8 h-8 text-[#C5A572]" />
                 <div>
                   <p className="text-white font-semibold text-sm">{t({ en: '24/7 Managed Care', zh: '24/7 全天候管理', ms: 'Penjagaan Terurus 24/7' })}</p>
-                  <p className="text-gray-400 text-xs">{t({ en: 'Penang · KL · Melaka · JB', zh: '槟城 · 吉隆坡 · 马六甲 · 新山', ms: 'P. Pinang · KL · Melaka · JB' })}</p>
+                  <p className="text-gray-400 text-xs">{t(COVERAGE.short)}</p>
                 </div>
               </div>
             </div>
@@ -312,24 +312,25 @@ export default function Home() {
 
         {/* ========== LOCATIONS ========== */}
         <section className="py-24 px-6">
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="max-w-6xl mx-auto text-center">
             <SectionHeader
               subtitle={t({ en: 'Where We Serve', zh: '服务地区', ms: 'Kawasan Perkhidmatan' })}
-              title={t({ en: 'Available Across Malaysia', zh: '服务遍及马来西亚', ms: 'Tersedia di Seluruh Malaysia' })}
+              title={t({ en: 'Available Across Malaysia & Singapore', zh: '服务遍及西马与新加坡', ms: 'Tersedia di Malaysia & Singapura' })}
               description={t({
-                en: 'Our caregivers are ready to deploy across these major cities and surrounding areas.',
-                zh: '我们的护理员随时可以到以下主要城市及周边地区服务。',
-                ms: 'Penjaga kami sedia ditempatkan di bandar-bandar utama ini dan kawasan sekitarnya.',
+                en: 'Our caregivers serve every state in Peninsular Malaysia, as well as Singapore.',
+                zh: '我们的护理员服务西马所有州属以及新加坡。',
+                ms: 'Penjaga kami berkhidmat di setiap negeri di Semenanjung Malaysia, serta Singapura.',
               })}
             />
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
               {CITIES.map((loc, i) => (
                 <div key={i} className="glass-card p-6 text-center">
                   <p className="text-lg font-semibold text-white">{t(loc.city)}</p>
-                  <p className="text-gray-500 text-xs mt-1">{t(loc.area)}</p>
+                  <p className="text-gray-400 text-xs mt-2 leading-relaxed">{t(loc.area)}</p>
                 </div>
               ))}
             </div>
+            <p className="text-gray-500 text-sm mt-8">{t(COVERAGE.notServed)}</p>
           </div>
         </section>
 
@@ -345,9 +346,9 @@ export default function Home() {
             </h2>
             <p className="text-gray-400 text-lg mb-10">
               {t({
-                en: 'Join 1,000+ Malaysian families who trust Aurelion for their loved ones. Free consultation — no obligation.',
-                zh: '已有超过 1,000 个马来西亚家庭把至亲托付给 Aurelion。免费咨询，没有任何义务。',
-                ms: 'Sertai lebih 1,000 keluarga Malaysia yang mempercayai Aurelion untuk insan tersayang mereka. Konsultasi percuma — tanpa obligasi.',
+                en: 'Join 1,000+ families who trust Aurelion for their loved ones. Free consultation — no obligation.',
+                zh: '已有超过 1,000 个家庭把至亲托付给 Aurelion。免费咨询，没有任何义务。',
+                ms: 'Sertai lebih 1,000 keluarga yang mempercayai Aurelion untuk insan tersayang mereka. Konsultasi percuma — tanpa obligasi.',
               })}
             </p>
             <div className="flex flex-wrap justify-center gap-4">

@@ -4,15 +4,15 @@ import SectionHeader from '../components/SectionHeader'
 import { PhoneIcon, EnvelopeIcon, MapPinIcon, ClockIcon } from '@heroicons/react/24/outline'
 import Head from 'next/head'
 import { useLang } from '../lib/i18n'
-import { CITIES, WHATSAPP_NUMBER } from '../lib/content'
+import { CITIES, COVERAGE, WHATSAPP_NUMBER } from '../lib/content'
 
 export default function Contact() {
   const { t } = useLang()
   return (
     <>
       <Head>
-        <title>Contact Aurelion | Free Home Care Consultation Malaysia</title>
-        <meta name="description" content="Contact Aurelion Concierge Care for a free, no-obligation consultation. WhatsApp, call, or email us. We serve Penang, KL, Melaka & Johor Bahru. Response within 5 minutes." />
+        <title>Contact Aurelion | Free Home Care Consultation Malaysia &amp; Singapore</title>
+        <meta name="description" content="Contact Aurelion Concierge Care for a free, no-obligation consultation. WhatsApp, call, or email us. We serve all of Peninsular Malaysia and Singapore. Response within 5 minutes." />
         <link rel="canonical" href="https://aurelionconcierge.com/contact" />
       </Head>
 
@@ -84,9 +84,15 @@ export default function Contact() {
                     <MapPinIcon className="w-5 h-5 text-[#C5A572]" />
                     <span className="text-white font-semibold">{t({ en: 'Service Areas', zh: '服务地区', ms: 'Kawasan Perkhidmatan' })}</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 text-gray-400 text-sm">
-                    {CITIES.map((c, i) => <span key={i}>📍 {t(c.city)}</span>)}
+                  <div className="space-y-1.5 text-sm">
+                    {CITIES.map((c, i) => (
+                      <p key={i} className="text-gray-400">
+                        📍 <span className="text-gray-300">{t(c.city)}</span>
+                        <span className="text-gray-500"> — {t(c.area)}</span>
+                      </p>
+                    ))}
                   </div>
+                  <p className="text-gray-600 text-xs mt-3">{t(COVERAGE.notServed)}</p>
                 </div>
               </div>
             </div>
