@@ -40,14 +40,14 @@ export default function Services() {
             })}
           />
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {SERVICES.map((s) => {
               const Icon = ICONS[s.key] || HeartIcon
               return (
                 <div key={s.key} className="glass-card overflow-hidden group flex flex-col">
                   <div className="relative">
                     {s.image ? (
-                      <SmartImage src={s.image} alt={t(s.name)} className="aspect-[16/9]" imgClassName="object-center transition-transform duration-700 group-hover:scale-105" />
+                      <SmartImage src={s.image} alt={t(s.name)} className="aspect-[16/9]" imgClassName={`${s.focus || 'object-center'} transition-transform duration-700 group-hover:scale-105`} />
                     ) : (
                       // 暂时没有照片：在同样大小的位置显示金色图标
                       <div className="aspect-[16/9] bg-gradient-to-br from-[#1a2b45] via-[#13233d] to-[#2a2416] flex items-center justify-center">
@@ -57,8 +57,8 @@ export default function Services() {
                       </div>
                     )}
                   </div>
-                  <div className="p-6 pt-3 flex-1">
-                    <h3 className="text-lg font-semibold mb-3 text-white">{t(s.name)}</h3>
+                  <div className="p-7 pt-5 flex-1">
+                    <h3 className="text-xl font-semibold mb-3 text-white">{t(s.name)}</h3>
                     <p className="text-gray-400 text-sm leading-relaxed">{t(s.desc)}</p>
                   </div>
                 </div>

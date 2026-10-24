@@ -213,8 +213,7 @@ export default function Home() {
               {HOME_SERVICE_KEYS.map(k => SERVICES.find(s => s.key === k)).map((service) => (
                 <Link key={service.key} href="/services" className="glass-card overflow-hidden group block">
                   <div className="relative">
-                    <SmartImage src={service.image} alt={t(service.name)} className="aspect-[16/9]" imgClassName="transition-transform duration-700 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0F1D32] via-transparent to-transparent"></div>
+                    <SmartImage src={service.image} alt={t(service.name)} className="aspect-[16/9]" imgClassName={`${service.focus || 'object-center'} transition-transform duration-700 group-hover:scale-105`} />
                   </div>
                   <div className="p-6 pt-4">
                     <h3 className="text-lg font-semibold mb-2 text-white">{t(service.name)}</h3>
