@@ -1,26 +1,16 @@
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import SectionHeader from '../components/SectionHeader'
-import { HeartIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
+import SmartImage from '../components/SmartImage'
+import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import Head from 'next/head'
-
-const services = [
-  { name: '24-Hour Stay-In Care', desc: 'Continuous professional care and companionship around the clock. Perfect for elderly parents, bedridden patients, or anyone needing full-time supervision. Our caregivers live in and become part of the family routine.' },
-  { name: 'Post-Hospital Recovery Care', desc: 'Smooth, safe transition from hospital to home. Our nurses manage wound care, medication schedules, mobility exercises, and monitor for complications.' },
-  { name: 'Dementia and Alzheimer Care', desc: 'Specialized, compassionate care for loved ones with memory loss. Caregivers trained in dementia communication techniques, safety protocols, and creating calming daily routines.' },
-  { name: 'Stroke Rehabilitation', desc: 'Post-stroke recovery program focusing on regaining mobility, speech, and independence. Includes prescribed exercises, medication management, and emotional support.' },
-  { name: 'Bedridden Patient Care', desc: 'Complete assistance for immobile patients. Includes feeding, bathing, diaper changing, pressure sore prevention, and passive range-of-motion exercises.' },
-  { name: 'Elderly Companion Care', desc: 'Social engagement and daily living assistance for seniors who prefer not to manage medical care alone. Company, meal preparation, light housekeeping, and medication reminders included.' },
-  { name: '12-Hour Day/Night Care', desc: 'Dedicated care during waking hours or overnight supervision. Ideal for families who can manage part of the day but need professional help during specific periods.' },
-  { name: 'Hourly Flexible Care', desc: 'As-needed assistance. From a few hours of respite care to accompanying your loved one to medical appointments. No minimum commitment.' },
-  { name: 'Medication Management', desc: 'Professional oversight of complex medication schedules. We ensure the right medicine at the right time, track side effects, and coordinate with your doctor.' },
-  { name: 'Physiotherapy at Home', desc: 'Certified physiotherapists provide rehabilitation sessions in the comfort of your home. Available as an add-on to any care package.' },
-  { name: 'Medical Escort Service', desc: 'We accompany your loved one to hospital appointments, dialysis sessions, or check-ups. Transportation can be arranged.' },
-  { name: 'Hospital Admission Coordination', desc: 'Full management of hospital admissions and discharges on behalf of the family. Paperwork, doctor communication, and bedside support.' },
-]
+import { useLang } from '../lib/i18n'
+import { SERVICES } from '../lib/content'
 
 export default function Services() {
+  const { t } = useLang()
+
   return (
     <>
       <Head>
@@ -33,24 +23,31 @@ export default function Services() {
       <main className="pt-24 pb-24 px-6 bg-glow min-h-screen">
         <div className="max-w-6xl mx-auto">
           <SectionHeader
-            subtitle="Our Expertise"
-            title="Complete Home Healthcare Services"
-            description="Every service is delivered by trained, background-checked professionals who treat your loved one like family. Available across Penang, KL, Melaka and JB."
+            subtitle={t({ en: 'Our Expertise', zh: '我们的专长', ms: 'Kepakaran Kami' })}
+            title={t({ en: 'Complete Home Healthcare Services', zh: '全方位居家护理服务', ms: 'Perkhidmatan Penjagaan Kesihatan di Rumah yang Lengkap' })}
+            description={t({
+              en: 'Every service is delivered by trained, background-checked professionals who treat your loved one like family. Available across Penang, KL, Melaka and JB.',
+              zh: '每项服务都由受过训练、通过背景审查的专业人员提供，像对待家人一样照顾您的亲人。服务覆盖槟城、吉隆坡、马六甲和新山。',
+              ms: 'Setiap perkhidmatan diberikan oleh profesional terlatih yang telah melalui semakan latar belakang, yang menjaga insan tersayang anda seperti keluarga sendiri. Tersedia di Pulau Pinang, KL, Melaka dan JB.',
+            })}
           />
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((s, i) => (
-              <div key={i} className="glass-card p-8 group">
-                <div className="w-12 h-12 bg-[#C5A572]/10 rounded-xl flex items-center justify-center mb-5 group-hover:bg-[#C5A572]/20 transition">
-                  <HeartIcon className="w-6 h-6 text-[#C5A572]" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {SERVICES.map((s) => (
+              <div key={s.key} className="glass-card overflow-hidden group flex flex-col">
+                <div className="relative">
+                  <SmartImage src={s.image} alt={t(s.name)} className="h-52" imgClassName="transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0F1D32] via-transparent to-transparent"></div>
                 </div>
-                <h3 className="text-lg font-semibold mb-3 text-white">{s.name}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
+                <div className="p-7 pt-4 flex-1">
+                  <h3 className="text-lg font-semibold mb-3 text-white">{t(s.name)}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{t(s.desc)}</p>
+                </div>
               </div>
             ))}
           </div>
           <div className="text-center mt-16">
             <Link href="/contact" className="btn-gold inline-flex items-center gap-2 text-lg px-8 py-4">
-              Enquire About a Service
+              {t({ en: 'Enquire About a Service', zh: '咨询服务详情', ms: 'Tanya Tentang Perkhidmatan' })}
               <ArrowRightIcon className="w-5 h-5" />
             </Link>
           </div>
