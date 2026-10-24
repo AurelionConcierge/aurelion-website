@@ -11,9 +11,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#C5A572] to-[#E2C99D] rounded-lg flex items-center justify-center">
-                <span className="text-[#0A1628] font-bold text-sm">A</span>
-              </div>
+              <img src="/images/logo-ac.png" alt="" width="48" height="36" className="h-9 w-auto" />
               <span className="text-lg font-display font-semibold text-[#C5A572]">AURELION</span>
             </div>
             <p className="text-gray-500 text-sm leading-relaxed">

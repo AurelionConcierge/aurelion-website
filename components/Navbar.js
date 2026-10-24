@@ -24,7 +24,7 @@ export function LanguageSwitcher({ className = '' }) {
           onClick={() => setLang(l.code)}
           aria-pressed={lang === l.code}
           title={l.name}
-          className={`px-2.5 py-1 rounded-full text-xs font-medium transition ${
+          className={`px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap transition ${
             lang === l.code ? 'bg-[#C5A572] text-[#0A1628]' : 'text-gray-400 hover:text-white'
           }`}
         >
@@ -72,10 +72,8 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center gap-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group shrink-0">
-          <div className="w-8 h-8 bg-gradient-to-br from-[#C5A572] to-[#E2C99D] rounded-lg flex items-center justify-center">
-            <span className="text-[#0A1628] font-bold text-sm">A</span>
-          </div>
-          <span className="text-xl font-display font-semibold text-[#C5A572] tracking-wider">AURELION</span>
+          <img src="/images/logo-ac.png" alt="Aurelion Concierge" width="53" height="40" className="h-10 w-auto" />
+          <span className="text-lg sm:text-xl font-display font-semibold text-[#C5A572] tracking-wider">AURELION</span>
         </Link>
 
         {/* Desktop Nav */}
