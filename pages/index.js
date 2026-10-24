@@ -9,7 +9,7 @@ import BookingForm from '../components/BookingForm'
 import PromoPopup from '../components/PromoPopup'
 import SmartImage from '../components/SmartImage'
 import { useLang } from '../lib/i18n'
-import { IMAGES } from '../lib/images'
+import { IMAGES, OG_IMAGE } from '../lib/images'
 import { SERVICES, CITIES, WHATSAPP_NUMBER } from '../lib/content'
 import {
   ShieldCheckIcon,
@@ -108,7 +108,7 @@ export default function Home() {
         <meta property="og:title" content="Private Home Healthcare Malaysia | Aurelion Concierge Care" />
         <meta property="og:description" content="Premium private home healthcare with VIP concierge service. 24-hour managed care across Penang, KL, Melaka & JB." />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content={IMAGES.hero} />
+        <meta property="og:image" content={OG_IMAGE} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://aurelionconcierge.com" />
@@ -119,19 +119,17 @@ export default function Home() {
 
       <main className="overflow-hidden">
         {/* ========== HERO SECTION ========== */}
-        <section className="relative min-h-screen flex items-center pt-20">
-          {/* 背景大图 + 深蓝渐层，保证文字清晰 */}
-          <SmartImage src={IMAGES.hero} alt="" className="!absolute inset-0" imgClassName="object-[70%_center]" eager />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-[#0A1628]/90 to-[#0A1628]/40 md:to-[#0A1628]/20"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-transparent to-[#0A1628]/60"></div>
+        <section className="relative min-h-screen flex items-center pt-20 bg-glow">
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-[#C5A572]/10 to-transparent rounded-full blur-3xl"></div>
 
-          <div className="relative max-w-7xl mx-auto px-6 py-20 w-full">
-            <div className="max-w-2xl animate-fade-in-up">
+          <div className="relative max-w-7xl mx-auto px-6 py-16 w-full">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="animate-fade-in-up">
               <div className="inline-flex items-center gap-2 bg-[#0A1628]/60 backdrop-blur border border-[#C5A572]/30 rounded-full px-4 py-2 text-xs text-[#C5A572] uppercase tracking-wider mb-8">
                 <SparklesIcon className="w-4 h-4" />
                 {t({ en: "Malaysia's Premium Home Healthcare", zh: '马来西亚高端居家护理', ms: 'Penjagaan Kesihatan di Rumah Premium Malaysia' })}
               </div>
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-semibold leading-tight mb-8">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-semibold leading-tight mb-8">
                 {t({ en: 'Your Loved Ones Deserve', zh: '您的至亲，值得', ms: 'Insan Tersayang Anda Layak' })}{t({ en: ' ', zh: '', ms: ' ' })}
                 <span className="text-gradient">{t({ en: 'World-Class Care at Home', zh: '在家享有世界级照护', ms: 'Penjagaan Bertaraf Dunia di Rumah' })}</span>
               </h1>
@@ -157,8 +155,28 @@ export default function Home() {
               </div>
             </div>
 
+            {/* 右侧主图（带金色边框） */}
+            <div className="relative animate-fade-in-up animate-delay-1">
+              <div className="absolute -inset-3 rounded-[2rem] border border-[#C5A572]/25 hidden sm:block"></div>
+              <SmartImage
+                src={IMAGES.hero}
+                alt={t({ en: 'Aurelion caregiver holding hands with an elderly woman at home', zh: 'Aurelion 护理员在家中握着长者的手', ms: 'Penjaga Aurelion memegang tangan warga emas di rumah' })}
+                className="h-80 sm:h-[28rem] lg:h-[34rem] rounded-3xl shadow-[0_30px_80px_rgba(0,0,0,0.5)]"
+                imgClassName="object-[30%_center]"
+                eager
+              />
+              <div className="absolute -bottom-5 left-5 sm:-left-6 glass-card !rounded-2xl !bg-[#0F1D32]/90 px-5 py-4 flex items-center gap-3">
+                <ShieldCheckIcon className="w-8 h-8 text-[#C5A572]" />
+                <div>
+                  <p className="text-white font-semibold text-sm">{t({ en: '24/7 Managed Care', zh: '24/7 全天候管理', ms: 'Penjagaan Terurus 24/7' })}</p>
+                  <p className="text-gray-400 text-xs">{t({ en: 'Penang · KL · Melaka · JB', zh: '槟城 · 吉隆坡 · 马六甲 · 新山', ms: 'P. Pinang · KL · Melaka · JB' })}</p>
+                </div>
+              </div>
+            </div>
+            </div>
+
             {/* 数据卡片 */}
-            <div className="animate-fade-in-up animate-delay-2 grid grid-cols-2 md:grid-cols-4 gap-4 mt-16">
+            <div className="animate-fade-in-up animate-delay-2 grid grid-cols-2 md:grid-cols-4 gap-4 mt-20">
               {stats.map((item, i) => (
                 <div key={i} className="glass-card !bg-[#0F1D32]/70 p-5 text-center">
                   <item.icon className="w-7 h-7 text-[#C5A572] mx-auto mb-2" />
