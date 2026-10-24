@@ -10,7 +10,7 @@ import PromoPopup from '../components/PromoPopup'
 import SmartImage from '../components/SmartImage'
 import { useLang } from '../lib/i18n'
 import { IMAGES, OG_IMAGE } from '../lib/images'
-import { SERVICES, CITIES, WHATSAPP_NUMBER } from '../lib/content'
+import { SERVICES, HOME_SERVICE_KEYS, CITIES, WHATSAPP_NUMBER } from '../lib/content'
 import {
   ShieldCheckIcon,
   ClockIcon,
@@ -210,10 +210,10 @@ export default function Home() {
               })}
             />
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {SERVICES.slice(0, 9).map((service) => (
+              {HOME_SERVICE_KEYS.map(k => SERVICES.find(s => s.key === k)).map((service) => (
                 <Link key={service.key} href="/services" className="glass-card overflow-hidden group block">
                   <div className="relative">
-                    <SmartImage src={service.image} alt={t(service.name)} className="h-48" imgClassName="transition-transform duration-700 group-hover:scale-105" />
+                    <SmartImage src={service.image} alt={t(service.name)} className="aspect-[16/9]" imgClassName="transition-transform duration-700 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0F1D32] via-transparent to-transparent"></div>
                   </div>
                   <div className="p-6 pt-4">
